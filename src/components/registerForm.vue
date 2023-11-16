@@ -1,15 +1,22 @@
 <script setup lang="ts">
   import { ref } from 'vue'
+  import type { Ref } from 'vue'
   import { useCredentialsStore } from '@/stores/credentials'
+  import type { Dialect } from '@/poster'
 
   const creds = useCredentialsStore()
 
-  const protocol = ref("")
-  const server = ref("")
-  const username = ref("")
-  const secretKey = ref("")
+  const protocol: Ref<Dialect|undefined> = ref(undefined)
+  const server: Ref<string> = ref("")
+  const username: Ref<string> = ref("")
+  const secretKey: Ref<string> = ref("")
 
   function register() {
+    if (protocol.value === undefined) {
+      console.log("undefined protocol, can't register")
+      throw new Error("undefined protocol, can't register")
+    }
+
     creds.credentials.push({
       protocol: protocol.value,
       server: server.value,

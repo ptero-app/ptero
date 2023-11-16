@@ -1,16 +1,18 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
+  import type { Ref } from 'vue'
   import { useCredentialsStore } from '@/stores/credentials'
   import { Poster } from '@/poster'
+  import type { Post, Image, Sensitivity } from '@/poster'
 
   const creds = useCredentialsStore()
 
-  const enqueued = ref(0)
+  const enqueued: Ref<number> = ref(0)
 
-  const text = ref("")
-  const image = ref("")
-  const altText = ref("")
-  const sensitivity = ref("none")
+  const text: Ref<string> = ref("")
+  const image: Ref<File|undefined> = ref(undefined)
+  const altText: Ref<string> = ref("")
+  const sensitivity: Ref<Sensitivity> = ref("none")
 
   const imageUrl = computed(() => {
     if (!(image.value instanceof File)) {
@@ -30,12 +32,12 @@
   function post() {
     enqueued.value += creds.credentials.length
 
-    let post = {
+    let post: Post = {
       text: text.value,
       sensitivity: sensitivity.value
     }
 
-    if (image.value != "") {
+    if (image.value !== undefined) {
       post.images = [{image: image.value, description: altText.value}]
     }
 
@@ -51,11 +53,12 @@
     }
   }
 
-  function imageChange(event) {
-    const input = event.target
-    const file = input.files[0]
-
-    image.value = file
+  function imageChange(event: Event) {
+    const input = event.target as HTMLInputElement
+    if (input.files) {
+      const file = input.files[0]
+      image.value = file
+    }
   }
 </script>
 

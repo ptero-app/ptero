@@ -2,8 +2,12 @@
  * @module poster
  */
 
-export type { Credential } from './types'
-
-export type { Image, Sensitivity, Post } from './post'
+export type {
+  Credential,
+  Dialect,
+  Image,
+  Sensitivity,
+  Post,
+} from './types'
 
 export { Poster } from './poster'

@@ -1,7 +1,6 @@
-import { BskyAgent } from '@atproto/api'
+import { BskyAgent, AppBskyEmbedImages } from '@atproto/api'
 
-import type { Credential, Dialect } from './types'
-import { Post } from './post'
+import type { Credential, Dialect, Post, BskyPost, BskyEmbed } from './types'
 
 export class Poster {
   creds: Credential
@@ -17,7 +16,7 @@ export class Poster {
         break
 
       default:
-        throw new Error(`${creds.protocol} not implemented`)
+        throw new Error(`${this.creds.protocol} not implemented`)
     }
   }
 
@@ -29,13 +28,13 @@ export class Poster {
       password: this.creds.secretKey,
     })
 
-    let bskyPost = {
+    let bskyPost: BskyPost = {
       text: post.text,
     }
 
     try {
-      if (post.images) {
-        bskyPost["embed"] = {
+      if (post.images?.length) {
+        let embed: BskyEmbed = {
           $type: "app.bsky.embed.images",
           images: [],
         }
@@ -50,16 +49,16 @@ export class Poster {
           const binaryRep = await syncReader(image.image)
           const blob = await agent.uploadBlob(binaryRep, {encoding: image.image.type})
 
-          bskyPost.embed.images.push({
+          embed.images?.push({
             image: blob.data.blob,
             alt: image.description,
           })
         }
 
-        console.log("sensitivity", post.sensitivity)
-        console.log(post)
+        bskyPost.embed = embed
+
         if (post.sensitivity && post.sensitivity != "none") {
-          bskyPost["labels"] = {
+          bskyPost.labels = {
             $type: "com.atproto.label.defs#selfLabels",
             values: [{val: post.sensitivity}],
           }
@@ -77,15 +76,19 @@ export class Poster {
   }
 }
 
-async function syncReader(file: File): Promise {
+async function syncReader(file: File): Promise<Uint8Array> {
   const reader = new FileReader()
   return new Promise((resolve, reject) => {
     reader.onload = (evt) => {
-      resolve(evt.target.result)
+      const target = (evt as ProgressEvent).target as FileReader
+      const result = target.result as ArrayBuffer
+
+      return new Uint8Array(result)
     }
 
     reader.onerror = (evt) => {
-      reject(evt.target.error)
+      const target = (evt as ProgressEvent).target as FileReader
+      reject(target.error)
     }
 
     reader.readAsArrayBuffer(file)

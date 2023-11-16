@@ -10,7 +10,7 @@
   const lf = localforage.createInstance({name: "credentials"})
   lf.getItem("credentials").then((value) => {
     if (value !== null) {
-      creds.credentials = JSON.parse(value)
+      creds.credentials = JSON.parse(value as string)
     }
   }).catch((err) => {console.log(err)})
 
