@@ -68,9 +68,15 @@
           Ptero runs completely in your web browser, meaning your credentials stay completely on your own device, and are never transmitted to a third party.
         </p>
 
+        <p>
+          Ptero's source code is available at <a href="https://github.com/ptero-app/ptero/">https://github.com/ptero-app/ptero/</a>, and is open source under the Mozilla Public License.
+        </p>
+
         <h2>Using Ptero</h2>
 
         <h3>Adding Credentials</h3>
+        <p><strong>Note!</strong> At present, Ptero will post using all your configured credentials. Selective posting is a future feature.</p>
+
         <p>
           Under the "Manage Credentials" tab, you're given a form to add a new set of credentials for multi-posting.
           You can also clear all your currently saved credentials from this same screen.
