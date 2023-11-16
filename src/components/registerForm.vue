@@ -2,9 +2,24 @@
   import { ref } from 'vue'
   import type { Ref } from 'vue'
   import { useCredentialsStore } from '@/stores/credentials'
+
+  import localforage from 'localforage'
+  import type { StateTree } from 'pinia'
+
   import type { Dialect } from '@/poster'
 
   const creds = useCredentialsStore()
+  const lf = localforage.createInstance({name: "credentials"})
+  lf.getItem("credentials").then((value) => {
+    if (value !== null) {
+      creds.credentials = JSON.parse(value as string)
+    }
+  }).catch((err) => {console.log(err)})
+
+
+  creds.$subscribe((_mut, state) => {
+    lf.setItem("credentials", JSON.stringify(state.credentials)).catch((err) => {console.log(err)})
+  }, {detached: true})
 
   const protocol: Ref<Dialect|undefined> = ref(undefined)
   const server: Ref<string> = ref("")
@@ -54,4 +69,12 @@
 
   <button @click="register">Register</button>
   <button @click="clear">Clear all connections</button>
+
+  <h2>Saved Credentials</h2>
+  <p>
+    Credentials are only stored on your device, and not transmitted anywhere other than the servers you specify.
+  </p>
+  <pre><code>
+{{creds.displaySafeCreds}}
+  </code></pre>
 </template>
