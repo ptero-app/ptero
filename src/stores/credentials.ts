@@ -8,9 +8,9 @@ export const useCredentialsStore = defineStore('credentials', () => {
   const credentials: Ref<Credential[]> = ref([])
 
   const displaySafeCreds = computed(() => {
-    let out: Credential[] = []
+    const out: Credential[] = []
 
-    for (let cred of credentials.value) {
+    for (const cred of credentials.value) {
       out.push({
         protocol: cred.protocol,
         server: cred.server,

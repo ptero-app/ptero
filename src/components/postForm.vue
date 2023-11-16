@@ -5,6 +5,15 @@
   import { Poster } from '@/poster'
   import type { Post, Image, Sensitivity } from '@/poster'
 
+  type toastType = "posted" | "error"
+  type toast = {
+    type: toastType
+    link?: string
+    error?: string
+  }
+
+  const toasts: Ref<toast[]> = ref([])
+
   const creds = useCredentialsStore()
 
   const enqueued: Ref<number> = ref(0)
@@ -46,10 +55,19 @@
     for (let cred of creds.credentials) {
       const poster = new Poster(cred)
       poster.post(post).then((url) => {
-        console.log("posted to", url)
-        enqueued.value--
+        console.log("success", url)
+        toasts.value.push({
+          type: "posted",
+          link: url,
+        })
       }).catch((e) => {
+        console.log("error", e, typeof e)
+        toasts.value.push({
+          type: "error",
+          error: `Couldn't post to ${cred.server}: ${e}`,
+        })
         console.log("failed to post", e)
+      }).finally(() => {
         enqueued.value--
       })
     }
@@ -65,6 +83,19 @@
 </script>
 
 <template>
+  <div class="toasts">
+    <div v-for="toast in toasts">
+      <div :class="toast.type" class="toast">
+        <span v-if="toast.type == 'posted'">
+          Posted to <a :href="toast.link">{{toast.link}}</a>
+        </span>
+        <span v-if="toast.type == 'error'">
+          {{toast.error}}
+        </span>
+      </div>
+    </div>
+  </div>
+
   <h2>Create post</h2>
 
   <label for="cw">Content warning</label><br />

@@ -10,7 +10,7 @@ export class Poster {
     this.creds = creds
   }
 
-  async post(post: Post): Promise<String> {
+  async post(post: Post): Promise<string> {
     switch(this.creds.protocol) {
       case "bluesky":
         return this._bluesky(post)
@@ -23,7 +23,7 @@ export class Poster {
     }
   }
 
-  async _bluesky(post: Post): Promise<String> {
+  async _bluesky(post: Post): Promise<string> {
     const agent = new BskyAgent({service: this.creds.server})
 
     await agent.login({
@@ -35,50 +35,46 @@ export class Poster {
       text: post.text,
     }
 
-    try {
-      if (post.images?.length) {
-        let embed: BskyEmbed = {
-          $type: "app.bsky.embed.images",
-          images: [],
-        }
-
-        for (let idx = 0; idx < post.images.length; idx++) {
-          const image = post.images[idx]
-
-          if (image.image.size > 1000000) {
-            throw new Error("image too large")
-          }
-
-          const binaryRep = await syncReader(image.image)
-          const blob = await agent.uploadBlob(binaryRep, {encoding: image.image.type})
-
-          embed.images?.push({
-            image: blob.data.blob,
-            alt: image.description,
-          })
-        }
-
-        bskyPost.embed = embed
-
-        if (post.sensitivity && post.sensitivity != "none") {
-          bskyPost.labels = {
-            $type: "com.atproto.label.defs#selfLabels",
-            values: [{val: post.sensitivity}],
-          }
-        }
+    if (post.images?.length) {
+      let embed: BskyEmbed = {
+        $type: "app.bsky.embed.images",
+        images: [],
       }
 
-      const response = await agent.post(bskyPost)
+      for (let idx = 0; idx < post.images.length; idx++) {
+        const image = post.images[idx]
 
-      const uriPath = response.uri.split("/").pop()
-      const postUrl = `https://bsky.app/profile/${this.creds.username}/post/${uriPath}`
-      return postUrl
-    } catch (e) {
-      throw e
+        if (image.image.size > 1000000) {
+          throw new Error("Image too large")
+        }
+
+        const binaryRep = await syncReader(image.image)
+        const blob = await agent.uploadBlob(binaryRep, {encoding: image.image.type})
+
+        embed.images?.push({
+          image: blob.data.blob,
+          alt: image.description,
+        })
+      }
+
+      bskyPost.embed = embed
+
+      if (post.sensitivity && post.sensitivity != "none") {
+        bskyPost.labels = {
+          $type: "com.atproto.label.defs#selfLabels",
+          values: [{val: post.sensitivity}],
+        }
+      }
     }
+
+    const response = await agent.post(bskyPost)
+
+    const uriPath = response.uri.split("/").pop()
+    const postUrl = `https://bsky.app/profile/${this.creds.username}/post/${uriPath}`
+    return postUrl
   }
 
-  async _mastodon(post: Post): Promise<String> {
+  async _mastodon(post: Post): Promise<string> {
     const client = createMastoClient({
       url: this.creds.server,
       accessToken: this.creds.secretKey,
