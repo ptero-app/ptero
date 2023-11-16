@@ -40,6 +40,12 @@
   })
 
   function post() {
+    if (text.value.length > 300) {
+      const over = text.value.length - 300
+      alert(`your post text is too long, it is currently ${over} characters too long`)
+      return
+    }
+
     enqueued.value += creds.credentials.length
 
     let post: Post = {
