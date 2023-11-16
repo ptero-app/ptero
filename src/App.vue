@@ -25,10 +25,6 @@
     Ptero is a federated cross-poster, for creating the same post with multiple accounts on services that speak the Mastodon and Bluesky protocols.
   </p>
 
-  <p>
-    Currently only supports posting to Bluesky
-  </p>
-
   <registerForm />
 
   <postForm />

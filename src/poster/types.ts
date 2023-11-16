@@ -38,3 +38,15 @@ export type BskyEmbedImage = {
   image: BlobRef
   alt: string
 }
+
+export type MastoPost = {
+  status: string
+  sensitive?: boolean
+  spoilerText?: string
+  mediaIds?: string[]
+}
+
+export type MastoMedia = {
+  file: Blob
+  description?: string
+}

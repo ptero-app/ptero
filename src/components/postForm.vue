@@ -9,6 +9,7 @@
 
   const enqueued: Ref<number> = ref(0)
 
+  const contentWarning: Ref<string> = ref("")
   const text: Ref<string> = ref("")
   const image: Ref<File|undefined> = ref(undefined)
   const altText: Ref<string> = ref("")
@@ -34,7 +35,8 @@
 
     let post: Post = {
       text: text.value,
-      sensitivity: sensitivity.value
+      sensitivity: sensitivity.value,
+      contentWarning: contentWarning.value,
     }
 
     if (image.value !== undefined) {
@@ -64,6 +66,9 @@
 
 <template>
   <h2>Create post</h2>
+
+  <label for="cw">Content warning</label><br />
+  <input type="text" name="cw" v-model="contentWarning"><br />
 
   <label for="text">Post text</label><br />
   <textarea name="text" v-model="text"></textarea><br />

@@ -1,6 +1,7 @@
 import { BskyAgent, AppBskyEmbedImages } from '@atproto/api'
+import { createRestAPIClient as createMastoClient } from 'masto'
 
-import type { Credential, Dialect, Post, BskyPost, BskyEmbed } from './types'
+import type { Credential, Dialect, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
 
 export class Poster {
   creds: Credential
@@ -13,7 +14,9 @@ export class Poster {
     switch(this.creds.protocol) {
       case "bluesky":
         return this._bluesky(post)
-        break
+
+      case "mastodon":
+        return this._mastodon(post)
 
       default:
         throw new Error(`${this.creds.protocol} not implemented`)
@@ -74,6 +77,52 @@ export class Poster {
       throw e
     }
   }
+
+  async _mastodon(post: Post): Promise<String> {
+    const client = createMastoClient({
+      url: this.creds.server,
+      accessToken: this.creds.secretKey,
+    })
+
+    let mastoPost: MastoPost = {
+      status: post.text,
+    }
+
+    if (post.images?.length) {
+      let mediaIds: string[] = []
+
+      for (const image of post.images) {
+        let input: MastoMedia = {
+          file: image.image,
+        }
+
+        if (image.description?.length) {
+          input.description = image.description
+        }
+
+        const response = await client.v2.media.create(input)
+        mediaIds.push(response.id)
+      }
+
+      mastoPost.mediaIds = mediaIds
+    }
+
+    if (post.sensitivity && post.sensitivity != "none") {
+      mastoPost.sensitive = true
+    }
+
+    if (post.contentWarning?.length) {
+      mastoPost.spoilerText = post.contentWarning
+      mastoPost.sensitive = true
+    }
+
+    const status = await client.v1.statuses.create(mastoPost)
+    if (!status.url) {
+      throw new Error(`no url on status -- uri: ${status.uri}`)
+    }
+
+    return status.url
+  }
 }
 
 async function syncReader(file: File): Promise<Uint8Array> {
@@ -83,7 +132,7 @@ async function syncReader(file: File): Promise<Uint8Array> {
       const target = (evt as ProgressEvent).target as FileReader
       const result = target.result as ArrayBuffer
 
-      return new Uint8Array(result)
+      resolve(new Uint8Array(result))
     }
 
     reader.onerror = (evt) => {
