@@ -9,10 +9,6 @@
   const creds = useCredentialsStore()
 
   const tab: Ref<string> = ref("post")
-  if (creds.credentials.length == 0) {
-    console.log(creds.credentials, creds.credentials.length)
-    tab.value = "credentials"
-  }
 
   const showPost = computed(() => {
     return tab.value == "post"
