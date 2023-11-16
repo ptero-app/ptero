@@ -1,7 +1,7 @@
-import { BskyAgent, AppBskyEmbedImages } from '@atproto/api'
+import { BskyAgent } from '@atproto/api'
 import { createRestAPIClient as createMastoClient } from 'masto'
 
-import type { Credential, Dialect, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
+import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
 
 export class Poster {
   creds: Credential
@@ -31,12 +31,12 @@ export class Poster {
       password: this.creds.secretKey,
     })
 
-    let bskyPost: BskyPost = {
+    const bskyPost: BskyPost = {
       text: post.text,
     }
 
     if (post.images?.length) {
-      let embed: BskyEmbed = {
+      const embed: BskyEmbed = {
         $type: "app.bsky.embed.images",
         images: [],
       }
@@ -80,15 +80,15 @@ export class Poster {
       accessToken: this.creds.secretKey,
     })
 
-    let mastoPost: MastoPost = {
+    const mastoPost: MastoPost = {
       status: post.text,
     }
 
     if (post.images?.length) {
-      let mediaIds: string[] = []
+      const mediaIds: string[] = []
 
       for (const image of post.images) {
-        let input: MastoMedia = {
+        const input: MastoMedia = {
           file: image.image,
         }
 

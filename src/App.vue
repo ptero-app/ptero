@@ -1,12 +1,9 @@
 <script setup lang="ts">
   import registerForm from './components/registerForm.vue'
   import postForm from './components/postForm.vue'
-  import { useCredentialsStore } from '@/stores/credentials'
 
   import { ref, computed } from 'vue'
   import type { Ref } from 'vue'
-
-  const creds = useCredentialsStore()
 
   const tab: Ref<string> = ref("post")
 

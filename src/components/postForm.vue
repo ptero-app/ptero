@@ -3,7 +3,7 @@
   import type { Ref } from 'vue'
   import { useCredentialsStore } from '@/stores/credentials'
   import { Poster } from '@/poster'
-  import type { Post, Image, Sensitivity } from '@/poster'
+  import type { Post, Sensitivity } from '@/poster'
 
   type toastType = "posted" | "error"
   type toast = {

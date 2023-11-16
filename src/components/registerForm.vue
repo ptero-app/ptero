@@ -1,12 +1,10 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import type { Ref } from 'vue'
-  import { useCredentialsStore } from '@/stores/credentials'
-
   import localforage from 'localforage'
-  import type { StateTree } from 'pinia'
 
   import type { Dialect } from '@/poster'
+  import { useCredentialsStore } from '@/stores/credentials'
 
   const creds = useCredentialsStore()
   const lf = localforage.createInstance({name: "credentials"})
