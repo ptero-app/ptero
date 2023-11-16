@@ -1,0 +1,89 @@
+<script setup lang="ts">
+  import { ref, computed } from 'vue'
+  import { useCredentialsStore } from '@/stores/credentials'
+  import { Poster } from '@/poster'
+
+  const creds = useCredentialsStore()
+
+  const enqueued = ref(0)
+
+  const text = ref("")
+  const image = ref("")
+  const altText = ref("")
+  const sensitivity = ref("none")
+
+  const imageUrl = computed(() => {
+    if (!(image.value instanceof File)) {
+      return ""
+    }
+
+    return URL.createObjectURL(image.value)
+  })
+
+  const displayAltText = computed(() => {
+    if (!(image.value instanceof File)) {
+      return "none"
+    }
+    return "block"
+  })
+
+  function post() {
+    enqueued.value += creds.credentials.length
+
+    let post = {
+      text: text.value,
+      sensitivity: sensitivity.value
+    }
+
+    if (image.value != "") {
+      post.images = [{image: image.value, description: altText.value}]
+    }
+
+    for (let cred of creds.credentials) {
+      const poster = new Poster(cred)
+      poster.post(post).then((url) => {
+        console.log("posted to", url)
+        enqueued.value--
+      }).catch((e) => {
+        console.log("failed to post", e)
+        enqueued.value--
+      })
+    }
+  }
+
+  function imageChange(event) {
+    const input = event.target
+    const file = input.files[0]
+
+    image.value = file
+  }
+</script>
+
+<template>
+  <h2>Create post</h2>
+
+  <label for="text">Post text</label><br />
+  <textarea name="text" v-model="text"></textarea><br />
+
+  <label for="image">Image</label><br>
+  <input type="file" accept="image/*" @change="imageChange"><br />
+
+  <img :src="imageUrl" style="max-height: 200px;"/><br/>
+
+  <div :style="{display: displayAltText}">
+    <label for="altText">Alt Text</label><br />
+    <input type="text" name="altText" v-model="altText"><br />
+
+    <strong>Sensitivity</strong><br />
+    <input type="radio" id="none" value="none" v-model="sensitivity">
+    <label for="none">None</label>
+    <input type="radio" id="sexual" value="sexual" v-model="sensitivity">
+    <label for="sexual">Suggestive</label>
+    <input type="radio" id="nudity" value="nudity" v-model="sensitivity">
+    <label for="nudity">Nudity</label>
+    <input type="radio" id="porn" value="porn" v-model="sensitivity">
+    <label for="porn">Porn</label>
+  </div>
+
+  <button @click="post" :disabled="enqueued != 0">Post</button>
+</template>
