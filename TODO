@@ -1,0 +1,29 @@
+TODO
+----
+
+Kept as a simple text file because this is just a small personal project,
+and I don't want to deal with a full project tracker for just myself right now.
+
+
+------------------
+Ordered Priorities
+------------------
+
+- Add a way to mass-delete bluesky posts over a certain age.
+    Only bluesky because mastodon has a tool for this built-in, where
+    bluesky doesn't.
+    Priority because bluesky just announced they're making the web app public
+
+- Add better styling
+    Especially for the post form
+
+
+---------------------
+Nice to have features
+---------------------
+
+- Support for multiple images in posts
+- Ability to select which accounts to post to
+- Ability to edit credentials / delete just a single credential
+- Ability to initiate the mastodon login oauth flow
+    So that people don't need to setup development apps

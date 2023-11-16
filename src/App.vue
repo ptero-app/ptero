@@ -67,9 +67,14 @@
 
         <p>
           Ptero's source code is available at <a href="https://github.com/ptero-app/ptero/">https://github.com/ptero-app/ptero/</a>, and is open source under the Mozilla Public License.
+          Feature planning is currently noted in the <a href="https://github.com/ptero-app/ptero/blob/main/TODO">TODO</a> document in the source code.
         </p>
 
         <h2>Using Ptero</h2>
+        <h3>Posting Limits</h3>
+        <p>
+          At present, Ptero only supports posts of up to 300 characters (the bluesky limit, because the default mastodon limit is 500), with one image attached.
+        </p>
 
         <h3>Adding Credentials</h3>
         <p><strong>Note!</strong> At present, Ptero will post using all your configured credentials. Selective posting is a future feature.</p>
