@@ -20,10 +20,21 @@
 </script>
 
 <template>
-  <!--  <registerForm /> -->
+  <h1>Ptero</h1>
+  <p>
+    Ptero is a federated cross-poster, for creating the same post with multiple accounts for services that speak the Mastodon and Bluesky protocols.
+
+    Currently only supports posting to Bluesky
+  </p>
+
+  <registerForm />
 
   <postForm />
 
+  <h2>Saved Credentials</h2>
+  <p>
+    Credentials are only stored on your device, and not transmitted anywhere other than the servers you specify.
+  </p>
   <pre><code>
 {{creds.credentials}}
   </code></pre>
