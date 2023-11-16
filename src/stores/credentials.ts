@@ -6,12 +6,17 @@ import type { Credential } from '@/poster'
 
 export const useCredentialsStore = defineStore('credentials', () => {
   const credentials: Ref<Credential[]> = ref([])
+
   const displaySafeCreds = computed(() => {
     let out: Credential[] = []
 
-    for (let i = 0; i < credentials.value.length; i++) {
-      out[i] = credentials.value[i]
-      out[i].secretKey = "<that's a secret>"
+    for (let cred of credentials.value) {
+      out.push({
+        protocol: cred.protocol,
+        server: cred.server,
+        username: cred.username,
+        secretKey: "<that's a secret>"
+      })
     }
 
     return out

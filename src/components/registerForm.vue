@@ -76,5 +76,7 @@
   </p>
   <pre><code>
 {{creds.displaySafeCreds}}
+
+{{creds.credentials}}
   </code></pre>
 </template>
