@@ -34,7 +34,7 @@
     Credentials are only stored on your device, and not transmitted anywhere other than the servers you specify.
   </p>
   <pre><code>
-{{creds.credentials}}
+{{creds.displaySafeCreds}}
   </code></pre>
 </template>
 
