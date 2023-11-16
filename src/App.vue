@@ -22,7 +22,7 @@
 <template>
   <h1>Ptero</h1>
   <p>
-    Ptero is a federated cross-poster, for creating the same post with multiple accounts for services that speak the Mastodon and Bluesky protocols.
+    Ptero is a federated cross-poster, for creating the same post with multiple accounts on services that speak the Mastodon and Bluesky protocols.
 
     Currently only supports posting to Bluesky
   </p>
