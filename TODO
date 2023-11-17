@@ -22,3 +22,4 @@ Nice to have features
 - Ability to edit credentials / delete just a single credential
 - Ability to initiate the mastodon login oauth flow
     So that people don't need to setup development apps
+- Create threads (like the twitter app)
