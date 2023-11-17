@@ -12,7 +12,7 @@
   const numDays: Ref<number> = ref(14)
 
   function deletePosts() {
-    statusMessage.value = "Working..."
+    statusMessage.value = "Starting Post Delete Process..."
 
     const filteredCreds: Credential[] = creds.credentials.filter((cred) => cred.username == selectedCreds.value) as Credential[]
     if (!filteredCreds.length) {
@@ -22,11 +22,13 @@
 
     const cred: Credential = filteredCreds.pop() as Credential
 
+    statusMessage.value = "Collecting posts..."
     const deleter = new Deleter(cred)
     deleter.postsToDelete(numDays.value).then((posts) => {
       const deleteThem = confirm(`You are about to delete ${posts.length} posts. This is irreversable. Do you wish to continue?`)
 
       if (deleteThem) {
+        statusMessage.value = "Deleting posts..."
         deleter.deletePosts(numDays.value).then((wereDeleted) => {
           if (wereDeleted) {
             statusMessage.value = `Deleted ${posts.length} posts`
@@ -45,7 +47,7 @@
   }
 
   function deleteReposts() {
-    statusMessage.value = "Working..."
+    statusMessage.value = "Starting Repost Delete Process..."
 
     const filteredCreds: Credential[] = creds.credentials.filter((cred) => cred.username == selectedCreds.value) as Credential[]
     if (!filteredCreds.length) {
@@ -55,11 +57,13 @@
 
     const cred: Credential = filteredCreds.pop() as Credential
 
+    statusMessage.value = "Collecting reposts..."
     const deleter = new Deleter(cred)
     deleter.repostsToDelete(numDays.value).then((reposts) => {
       const deleteThem = confirm(`You are about to delete ${reposts.length} reposts. This is irreversable. Do you wish to continue?`)
 
       if (deleteThem) {
+        statusMessage.value = "Deleting Reposts..."
         deleter.deleteReposts(numDays.value).then((wereDeleted) => {
           if (wereDeleted) {
             statusMessage.value = `Deleted ${reposts.length} reposts`
