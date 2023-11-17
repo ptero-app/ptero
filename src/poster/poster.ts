@@ -3,6 +3,8 @@ import { createRestAPIClient as createMastoClient } from 'masto'
 
 import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
 
+export const MaxImageSize = 1000000;
+
 export class Poster {
   creds: Credential
 
@@ -44,7 +46,7 @@ export class Poster {
       for (let idx = 0; idx < post.images.length; idx++) {
         const image = post.images[idx]
 
-        if (image.image.size > 1000000) {
+        if (image.image.size > MaxImageSize) {
           throw new Error("Image too large")
         }
 

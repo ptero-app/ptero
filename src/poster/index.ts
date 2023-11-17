@@ -3,13 +3,13 @@
  */
 
 export type {
-  Credential,
   Dialect,
-  Image,
   Sensitivity,
+  Credential,
+  Image,
   Post,
 } from './types'
 
-export { Poster } from './poster'
+export { Poster, MaxImageSize } from './poster'
 
 export { Deleter } from './deleter'

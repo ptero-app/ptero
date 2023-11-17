@@ -69,7 +69,7 @@
 <template>
   <h2>Register new connection</h2>
 
-  <div class="grid">
+  <div class="input-grid">
     <label>Protocol</label>
     <div class="radio items">
       <input type="radio" id="mastodon" value="mastodon" v-model="protocol">
@@ -97,7 +97,7 @@
   </p>
 
   <div id="saved-creds" v-for="cred in creds.credentials">
-    <div class="grid">
+    <div class="input-grid">
       <label>Protocol</label> <span class="spacer">{{cred.protocol}}</span>
 
       <label :for="cred.server + cred.username + 'server'">Server</label>
@@ -119,27 +119,6 @@
 </template>
 
 <style scoped lang="scss">
-  .grid {
-    display: grid;
-    grid-template-columns: 10em auto;
-
-    label {
-      padding-right: 1em;
-      padding-top: 0.25em;
-      text-align: right;
-      font-weight: bold;
-    }
-
-    .spacer {
-      padding-top: 0.25em;
-      padding-bottom: 0.5em;
-    }
-
-    input {
-      margin-bottom: 0.5em;
-    }
-  }
-
   hr {
     border-top: 3px solid black;
     margin-left: 10vw;

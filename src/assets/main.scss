@@ -1,0 +1,62 @@
+@import './base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  font-weight: normal;
+}
+
+input[type="text"], input[type="password"], input[type="number"], button, textarea, label.btn {
+  font-size: 1em;
+  padding: 0.25em;
+  border: 3px solid black;
+
+  margin-bottom: 0.5em;
+}
+
+button, label.btn {
+  background: rgb(225, 225, 225);
+  margin-right: 0.5em;
+  padding-left: 0.5em !important;
+  padding-right: 0.5em !important;
+  font-weight: normal !important;
+
+  &:hover {
+    background: rgb(200, 200, 200);
+  }
+
+  &:active {
+    background: rgb(175, 175, 175);
+  }
+
+  &:disabled {
+    background: rgb(150, 150, 150);
+  }
+}
+
+textarea {
+  height: 6em;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 10em auto;
+
+  label {
+    padding-right: 1em;
+    padding-top: 0.25em;
+    text-align: right;
+    font-weight: bold;
+  }
+
+  .spacer {
+    padding-top: 0.25em;
+    padding-bottom: 0.5em;
+  }
+
+  input {
+    margin-bottom: 0.5em;
+  }
+}

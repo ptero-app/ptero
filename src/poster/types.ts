@@ -2,21 +2,21 @@ import { ComAtprotoLabelDefs } from '@atproto/api'
 import { BlobRef } from '@atproto/lexicon'
 
 export type Dialect = "mastodon" | "bluesky"
-export type Credential = {
-  protocol: Dialect;
-  server: string;
-  username: string;
-  secretKey: string;
+export interface Credential {
+  protocol: Dialect
+  server: string
+  username: string
+  secretKey: string
 }
 
-export type Image = {
+export interface Image {
   image: File
   description: string
 }
 
 export type Sensitivity = "none" | "sexual" | "nudity" | "porn"
 
-export type Post = {
+export interface Post {
   text: string
   images?: Image[]
   sensitivity?: Sensitivity
