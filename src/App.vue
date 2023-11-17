@@ -85,7 +85,8 @@
         <h2>Using Ptero</h2>
         <h3>Posting Limits</h3>
         <p>
-          At present, Ptero only supports posts of up to 300 characters (the bluesky limit, because the default mastodon limit is 500), with one image attached.
+          At present, Ptero only supports posts of up to 300 characters (the bluesky limit, because the default mastodon limit is 500).
+          Images are limited to 1MB in size (the bluesky limit -- compressing them automatically is a nice to have feature for the future).
         </p>
 
         <h3>Adding Credentials</h3>
