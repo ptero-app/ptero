@@ -93,8 +93,8 @@
 
         <p>
           Under the "Manage Credentials" tab, you're given a form to add a new set of credentials for multi-posting.
-          You can also clear all your currently saved credentials from this same screen.
-          There is not currently a way to remove or modify a single credential.
+          You can also edit existing credentials and clear all your currently saved credentials from this same screen.
+          There is not currently a way to remove a single credential.
         </p>
 
         <p>
@@ -103,8 +103,8 @@
         </p>
         <p>The recommended settings are:</p>
         <ul>
-          <li><strong>Server:</strong> <code>https://bsky.social</code>. You can technically use another server if it also speaks the atproto, but to use the main bluesky service, use <code>https://bsky.social</code></li>
-          <li><strong>Username:</strong> either your handle on bluesky, minus the <code>@</code> symbol (so if you're <code>@anexample.bsky.social</code>, you should use <code>anexample.bsky.social</code>), or the email address you use to login</li>
+          <li><strong>Server:</strong> <code>https://bsky.social</code>. You can technically use another server if it also speaks the atproto, but to use the main bluesky service, use <code>https://bsky.social</code>. You <strong>must</strong> include the <code>https</code>.</li>
+          <li><strong>Username:</strong> either your handle on bluesky, minus the <code>@</code> symbol (so if you're <code>@anexample.bsky.social</code>, you should use <code>anexample.bsky.social</code>), or the email address you use to login. If you're using the post delete function, you must use your handle.</li>
           <li><strong>API Key/App Password:</strong> this should be an app password you generated. You can use your regular password, but I strongly recommend using an app password.</li>
         </ul>
 
@@ -122,7 +122,17 @@
 
         <h3>Mass Deleting Bluesky Posts</h3>
         <p>
-          If you've added at least one set of bluesky credentials, you can use the "Mass Delete Posts" tab to delete all posts or reposts older than a certain age (to delete them all, set the number of days to keep to 0)
+          With Bluesky announcing that they're going to open up the main web app for public consumption, people were looking for a way to easily delete old posts.
+          That's what the mass deleter is for.
+        </p>
+
+        <p>
+        If you've added at least one set of bluesky credentials, you can use the "Mass Delete Posts" tab to delete all posts or reposts older than a certain age (to delete them all, set the number of days to keep to <code>0</code>).
+        Posts are reposts are a separate button, because that's how bluesky organizes them internally, and my own preference is to delete reposts sooner than posts.
+        </p>
+
+        <p>
+          This feature only works with Bluesky, because mastodon has it built in.
         </p>
       </div>
     </div>
