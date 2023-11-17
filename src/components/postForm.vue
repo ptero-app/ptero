@@ -88,6 +88,15 @@
   }
 
   function imageChange(event: Event) {
+    if (images.value.length >= 4) {
+      const deleteEm = confirm("You have already uploaded four images. Clear them all and start over?")
+      if (!deleteEm) {
+        return
+      }
+
+      images.value = []
+    }
+
     const input = event.target as HTMLInputElement
     if (input.files) {
       const file = input.files[0]
