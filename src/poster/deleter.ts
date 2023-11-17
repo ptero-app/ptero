@@ -51,6 +51,7 @@ export class Deleter {
 
   async getPosts(): Promise<RepoList.Record[]> {
     await this._login()
+    // this.posts = await paginatedListRecords(this.agent, this.creds.username, bskyPostFeed)
     this.posts = await paginatedListRecords(this.agent, this.creds.username, bskyPostFeed)
     return this.posts
   }

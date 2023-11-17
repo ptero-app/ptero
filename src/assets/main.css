@@ -7,3 +7,30 @@
 
   font-weight: normal;
 }
+
+input[type="text"], input[type="password"], input[type="number"], button {
+  font-size: 1em;
+  padding: 0.25em;
+  border: 3px solid black;
+
+  margin-bottom: 0.5em;
+}
+
+button {
+  background: rgb(225, 225, 225);
+  margin-right: 0.5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+
+  &:hover {
+    background: rgb(200, 200, 200);
+  }
+
+  &:active {
+    background: rgb(175, 175, 175);
+  }
+
+  &:disabled {
+    background: rgb(150, 150, 150);
+  }
+}

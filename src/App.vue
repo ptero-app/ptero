@@ -130,7 +130,7 @@
 </template>
 
 <style scoped lang="scss">
-  $line-size: 5px;
+  $line-size: 3px;
 
   header {
     margin-bottom: 2em;
@@ -153,17 +153,15 @@
 
       li {
         padding: 0.5em 1em;
-        //margin-left: 0.5em;
         margin-right: 1em;
         border: $line-size solid black;
-        //border-radius: 5px 5px 0 0;
         border-bottom-width: 0px;
         background: rgb(200, 200, 200);
 
         &.active {
           background: white;
           border-bottom: $line-size solid white;
-          margin-bottom: -5px;
+          margin-bottom: -3px;
         }
 
         a {
