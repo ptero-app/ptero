@@ -11,3 +11,5 @@ export type {
 } from './types'
 
 export { Poster } from './poster'
+
+export { Deleter } from './deleter'

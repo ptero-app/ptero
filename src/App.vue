@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import registerForm from './components/registerForm.vue'
   import postForm from './components/postForm.vue'
+  import deleteForm from './components/deleteForm.vue'
 
   import { ref, computed } from 'vue'
   import type { Ref } from 'vue'
@@ -16,6 +17,9 @@
   const showAbout = computed(() => {
     return tab.value == "about"
   })
+  const showDelete = computed(() => {
+    return tab.value == "delete"
+  })
 
   function openPost() {
     tab.value = "post"
@@ -27,6 +31,10 @@
 
   function openAbout() {
     tab.value = "about"
+  }
+
+  function openDelete() {
+    tab.value = "delete"
   }
 </script>
 
@@ -43,6 +51,7 @@
     <ul id="tab-select">
       <li :class="{active: showPost}"><a @click="openPost" href="#">Create Post</a></li>
       <li :class="{active: showCredentials}"><a @click="openCredentials" href="#">Manage Credentials</a></li>
+      <li :class="{active: showDelete}"><a @click="openDelete" href="#">Mass Delete Posts</a></li>
       <li :class="{active: showAbout}"><a @click="openAbout" href="#">About</a></li>
     </ul>
 
@@ -52,6 +61,9 @@
       </div>
       <div class="tab" v-show="showPost">
         <postForm />
+      </div>
+      <div class="tab" v-show="showDelete">
+        <deleteForm />
       </div>
 
       <div class="tab" v-show="showAbout">

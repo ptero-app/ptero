@@ -14,5 +14,6 @@ module.exports = {
   },
   rules: {
     "vue/require-v-for-key": "off",
+    "no-constant-condition": ["error", {"checkLoops": false}],
   }
 }

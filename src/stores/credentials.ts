@@ -22,9 +22,13 @@ export const useCredentialsStore = defineStore('credentials', () => {
     return out
   })
 
+  const blueskyCredentials = computed(() => {
+    return credentials.value.filter((cred) => cred.protocol == "bluesky")
+  })
+
   function clear() {
     credentials.value = []
   }
 
-  return { credentials, displaySafeCreds, clear }
+  return { credentials, displaySafeCreds, clear, blueskyCredentials }
 })
