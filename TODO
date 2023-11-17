@@ -9,11 +9,6 @@ and I don't want to deal with a full project tracker for just myself right now.
 Ordered Priorities
 ------------------
 
-- Add a way to mass-delete bluesky posts over a certain age.
-    Only bluesky because mastodon has a tool for this built-in, where
-    bluesky doesn't.
-    Priority because bluesky just announced they're making the web app public
-
 - Add better styling
     Especially for the post form
 
