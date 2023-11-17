@@ -119,6 +119,11 @@
           <li><strong>Username:</strong> This is technically not required, you can add a name here for personal reference</li>
           <li><strong>API Key/App Password:</strong> this is the access token for the development app you generated.</li>
         </ul>
+
+        <h3>Mass Deleting Bluesky Posts</h3>
+        <p>
+          If you've added at least one set of bluesky credentials, you can use the "Mass Delete Posts" tab to delete all posts or reposts older than a certain age (to delete them all, set the number of days to keep to 0)
+        </p>
       </div>
     </div>
   </div>
