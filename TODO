@@ -5,21 +5,15 @@ Kept as a simple text file because this is just a small personal project,
 and I don't want to deal with a full project tracker for just myself right now.
 
 
-------------------
-Ordered Priorities
-------------------
-
-- Add better styling
-    Especially for the post form
-
-
 ---------------------
 Nice to have features
 ---------------------
 
-- Support for multiple images in posts
 - Ability to select which accounts to post to
 - Ability to delete just a single credential
 - Ability to initiate the mastodon login oauth flow
     So that people don't need to setup development apps
 - Create threads (like the twitter app)
+- Ability to re-order images, or remove them
+
+- Better styles (current version is functional, would like to make it prettier)
