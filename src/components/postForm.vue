@@ -27,10 +27,10 @@
   const images: Ref<Image[]> = ref([])
   const sensitivity: Ref<Sensitivity> = ref("none")
 
-  window.onload = (event) => {
+  window.onload = () => {
     const queryParams = new URLSearchParams(window.location.search)
     if (queryParams.has("text")) {
-      text.value = queryParams.get("text")
+      text.value = queryParams.get("text") as string
     }
   }
 
