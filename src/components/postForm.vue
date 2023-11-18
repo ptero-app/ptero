@@ -120,6 +120,12 @@
       })
     }
   }
+
+  function checkIfFastPost(event: KeyboardEvent) {
+    if (event.key == "Enter" && (event.metaKey || event.ctrlKey)) {
+      post()
+    }
+  }
 </script>
 
 <template>
@@ -139,43 +145,45 @@
 
   <h2>Create post</h2>
 
-  <div class="input-grid">
-    <label for="cw">Content warning</label>
-    <input type="text" name="cw" v-model="contentWarning">
+  <form @submit.prevent="post">
+    <div class="input-grid">
+      <label for="cw">Content warning</label>
+      <input type="text" name="cw" v-model="contentWarning">
 
-    <label for="text">Post text</label>
-    <textarea name="text" v-model="text"></textarea>
+      <label for="text">Post text</label>
+      <textarea name="text" v-model="text" @keydown="checkIfFastPost"></textarea>
 
-    <label for="image">Image</label>
-    <div class="fakie">
-      <label class="btn">
-        Choose Image
-        <input type="file" accept="image/*" @change="imageChange" :disabled="disableUpload" style="display: none;">
-      </label>
-    </div>
-  </div>
-
-  <div v-show="images.length != 0">
-    <div class="image-grid">
-      <div v-for="image in images" class="image-container">
-        <img :src="image.blobUrl" />
-        <label :for="image.blobUrl">Alt Text</label>
-        <textarea :id="image.blobUrl" v-model="image.description"></textarea>
+      <label for="image">Image</label>
+      <div class="fakie">
+        <label class="btn">
+          Choose Image
+          <input type="file" accept="image/*" @change="imageChange" :disabled="disableUpload" style="display: none;">
+        </label>
       </div>
     </div>
 
-    <strong>Sensitivity</strong><br />
-    <input type="radio" id="none" value="none" v-model="sensitivity">&nbsp;
-    <label for="none">None</label>&nbsp;
-    <input type="radio" id="sexual" value="sexual" v-model="sensitivity">&nbsp;
-    <label for="sexual">Suggestive</label>&nbsp;
-    <input type="radio" id="nudity" value="nudity" v-model="sensitivity">&nbsp;
-    <label for="nudity">Nudity</label>&nbsp;
-    <input type="radio" id="porn" value="porn" v-model="sensitivity">&nbsp;
-    <label for="porn">Porn</label>&nbsp;
-  </div>
+    <div v-show="images.length != 0">
+      <div class="image-grid">
+        <div v-for="image in images" class="image-container">
+          <img :src="image.blobUrl" />
+          <label :for="image.blobUrl">Alt Text</label>
+          <textarea :id="image.blobUrl" v-model="image.description"></textarea>
+        </div>
+      </div>
 
-  <button @click="post" :disabled="enqueued != 0">Post</button>
+      <strong>Sensitivity</strong><br />
+      <input type="radio" id="none" value="none" v-model="sensitivity">&nbsp;
+      <label for="none">None</label>&nbsp;
+      <input type="radio" id="sexual" value="sexual" v-model="sensitivity">&nbsp;
+      <label for="sexual">Suggestive</label>&nbsp;
+      <input type="radio" id="nudity" value="nudity" v-model="sensitivity">&nbsp;
+      <label for="nudity">Nudity</label>&nbsp;
+      <input type="radio" id="porn" value="porn" v-model="sensitivity">&nbsp;
+      <label for="porn">Porn</label>&nbsp;
+    </div>
+
+    <button :disabled="enqueued != 0">Post</button>
+  </form>
 </template>
 
 <style scoped lang="scss">
