@@ -27,6 +27,13 @@
   const images: Ref<Image[]> = ref([])
   const sensitivity: Ref<Sensitivity> = ref("none")
 
+  window.onload = (event) => {
+    const queryParams = new URLSearchParams(window.location.search)
+    if (queryParams.has("text")) {
+      text.value = queryParams.get("text")
+    }
+  }
+
   const disableUpload: Ref<boolean> = ref(false)
 
   const enqueued: Ref<number> = ref(0)
