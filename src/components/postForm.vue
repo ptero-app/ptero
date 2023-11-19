@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue'
   import type { Ref } from 'vue'
+  import Compressor from 'compressorjs'
   import { useCredentialsStore } from '@/stores/credentials'
   import { Poster, MaxImageSize } from '@/poster'
   import type { Post, Sensitivity } from '@/poster'
@@ -88,12 +89,6 @@
     }
   }
 
-  function humanSize(bytes: number) {
-    var s = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'];
-    var e = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, e)).toFixed(2) + " " + s[e];
-  }
-
   function imageChange(event: Event) {
     if (images.value.length >= 4) {
       const deleteEm = confirm("You have already uploaded four images. Clear them all and start over?")
@@ -108,17 +103,52 @@
     if (input.files) {
       const file = input.files[0]
 
-      if (file.size > MaxImageSize) {
-        alert(`This image is too big, it's ${humanSize(file.size)}, maximum allowed is 1MB`)
-        return
-      }
-
-      images.value.push({
-        image: file,
-        description: "",
-        blobUrl: URL.createObjectURL(file),
+      compressImage(file, MaxImageSize).then((file) => {
+        images.value.push({
+          image: file as File,
+          description: "",
+          blobUrl: URL.createObjectURL(file),
+        })
+      }).catch((error) => {
+        console.log("Couldn't compress file:", error)
+        alert(`Couldn't compress file to less than 1MB, try manually resizing`)
       })
     }
+  }
+
+  const compressLevels = [
+    {quality: 0.8, resize: false},
+    {quality: 0.8, resize: true},
+    {quality: 0.6, resize: true},
+  ]
+  async function compressImage(image: File, maxSize: number): Promise<File|Blob> {
+    if (image.size < maxSize) {
+      return image
+    }
+
+    for (const compressLevel of compressLevels) {
+      const compressed = await new Promise<File|Blo|Blobb>((resolve, reject) => {
+        let options: Compressor.Options = {
+          quality: compressLevel.quality,
+          resize: compressLevel.resize ? "contain" : "none",
+          success: resolve,
+          error: reject,
+        }
+
+        if (compressLevel.resize) {
+          options.maxHeight = 1200
+          options.maxWidth = 1200
+        }
+
+        new Compressor(image, options)
+      })
+
+      if (compressed.size < maxSize) {
+        return compressed
+      }
+    }
+
+    throw new Error("Couldn't automatically compress image")
   }
 
   function checkIfFastPost(event: KeyboardEvent) {
