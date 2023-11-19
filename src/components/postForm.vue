@@ -127,7 +127,7 @@
     }
 
     for (const compressLevel of compressLevels) {
-      const compressed = await new Promise<File|Blo|Blobb>((resolve, reject) => {
+      const compressed = await new Promise<File|Blob>((resolve, reject) => {
         let options: Compressor.Options = {
           quality: compressLevel.quality,
           resize: compressLevel.resize ? "contain" : "none",
