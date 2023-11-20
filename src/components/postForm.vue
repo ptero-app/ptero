@@ -10,6 +10,7 @@
   type toast = {
     type: toastType
     link?: string
+    shortname?: string
     error?: string
   }
 
@@ -75,6 +76,7 @@
         toasts.value.push({
           type: "posted",
           link: url,
+          shortname: `${creds.server} : ${creds.username}`,
         })
       }).catch((e) => {
         console.log("error", e, typeof e)
@@ -163,7 +165,7 @@
     <div v-for="toast in toasts">
       <div :class="toast.type" class="toast">
         <span v-if="toast.type == 'posted'">
-          Posted to <a :href="toast.link">{{toast.link}}</a>
+          Posted to <a :href="toast.link">{{toast.shortname}}</a>
         </span>
         <span v-if="toast.type == 'error'">
           {{toast.error}}
