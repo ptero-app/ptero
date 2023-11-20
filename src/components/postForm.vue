@@ -76,7 +76,7 @@
         toasts.value.push({
           type: "posted",
           link: url,
-          shortname: `${creds.server} : ${creds.username}`,
+          shortname: `${cred.server} : ${cred.username}`,
         })
       }).catch((e) => {
         console.log("error", e, typeof e)
