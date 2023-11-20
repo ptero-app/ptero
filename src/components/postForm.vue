@@ -51,6 +51,14 @@
   function post() {
     toasts.value = []
 
+    if (text.value.length + images.value.length == 0) {
+      toasts.value.push({
+        type: "error",
+        error: "Can't send an empty post",
+      })
+      return
+    }
+
     if (text.value.length > 300) {
       const over = text.value.length - 300
       alert(`your post text is too long, it is currently ${over} characters too long`)
