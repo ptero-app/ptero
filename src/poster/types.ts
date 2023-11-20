@@ -1,4 +1,4 @@
-import { ComAtprotoLabelDefs } from '@atproto/api'
+import { ComAtprotoLabelDefs, AppBskyRichtextFacet } from '@atproto/api'
 import { BlobRef } from '@atproto/lexicon'
 
 export type Dialect = "mastodon" | "bluesky"
@@ -27,6 +27,7 @@ export type BskyPost = {
   text: string
   embed?: BskyEmbed
   labels?: ComAtprotoLabelDefs.SelfLabels
+  facets?: AppBskyRichtextFacet.Main[]
 }
 
 export type BskyEmbed = {

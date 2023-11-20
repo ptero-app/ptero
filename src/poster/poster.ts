@@ -1,4 +1,4 @@
-import { BskyAgent } from '@atproto/api'
+import { BskyAgent, RichText } from '@atproto/api'
 import { createRestAPIClient as createMastoClient } from 'masto'
 
 import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
@@ -33,8 +33,12 @@ export class Poster {
       password: this.creds.secretKey,
     })
 
+    const text = new RichText({text: post.text})
+    await text.detectFacets(agent)
+
     const bskyPost: BskyPost = {
-      text: post.text,
+      text: text.text,
+      facets: text.facets,
     }
 
     if (post.images?.length) {
