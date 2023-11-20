@@ -183,10 +183,10 @@
       <label for="text">Post text</label>
       <textarea name="text" v-model="text" @keydown="checkIfFastPost"></textarea>
 
-      <label for="image">Image</label>
+      <label id="imglabel" for="image">Image</label>
       <div class="fakie">
         <label class="btn">
-          Choose Image
+          Upload Image
           <input type="file" accept="image/*" @change="imageChange" :disabled="disableUpload" style="display: none;">
         </label>
       </div>
@@ -201,18 +201,20 @@
         </div>
       </div>
 
-      <strong>Sensitivity</strong><br />
-      <input type="radio" id="none" value="none" v-model="sensitivity">&nbsp;
-      <label for="none">None</label>&nbsp;
-      <input type="radio" id="sexual" value="sexual" v-model="sensitivity">&nbsp;
-      <label for="sexual">Suggestive</label>&nbsp;
-      <input type="radio" id="nudity" value="nudity" v-model="sensitivity">&nbsp;
-      <label for="nudity">Nudity</label>&nbsp;
-      <input type="radio" id="porn" value="porn" v-model="sensitivity">&nbsp;
-      <label for="porn">Porn</label>&nbsp;
+      <div id="sensitivity-picker">
+        <strong>Sensitivity</strong><br />
+        <input type="radio" id="none" value="none" v-model="sensitivity">&nbsp;
+        <label for="none">None</label>&nbsp;
+        <input type="radio" id="sexual" value="sexual" v-model="sensitivity">&nbsp;
+        <label for="sexual">Suggestive</label>&nbsp;
+        <input type="radio" id="nudity" value="nudity" v-model="sensitivity">&nbsp;
+        <label for="nudity">Nudity</label>&nbsp;
+        <input type="radio" id="porn" value="porn" v-model="sensitivity">&nbsp;
+        <label for="porn">Porn</label>&nbsp;
+      </div>
     </div>
 
-    <button :disabled="enqueued != 0">Post</button>
+    <button id="postit" :disabled="enqueued != 0">Post</button>
   </form>
 </template>
 
@@ -220,9 +222,19 @@
   .image-grid {
     display: grid;
     grid-template-columns: 25% 25% 25% 25%;
-    margin-top: 1em;
+    margin-top: 2em;
+
+    @media (max-width: 650px) {
+      grid-template-columns: 50% 50%;
+    }
+
+    @media (max-width: 400px) {
+      grid-template-columns: 100%;
+    }
 
     .image-container {
+      margin-bottom: 1em;
+
       img {
         max-width: 100%;
       }
@@ -232,4 +244,20 @@
     }
   }
 
+  #sensitivity-picker {
+    margin-bottom: 1em;
+  }
+
+  #postit {
+    @media (max-width: 650px) {
+      width: 100%;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 650px) {
+    #imglabel {
+      display: none;
+    }
+  }
 </style>

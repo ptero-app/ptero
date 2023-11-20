@@ -153,14 +153,25 @@
 
   #tabs {
     #tab-select {
+      white-space: nowrap;
       display: flex;
-      //justify-content: center;
 
       list-style: none;
       margin: 0;
+      margin-bottom: 2rem;
       padding: 0;
-      border-bottom: $line-size solid black;
       padding-left: 1em;
+      padding-right: 1em;
+
+      border-bottom: $line-size solid black;
+
+      overflow-x: scroll;
+      overflow-y: visible;
+      width: calc(100% + 4rem);
+      margin-left: -2rem;
+      padding-left: 2rem;
+      padding-right: 2rem;
+
 
       li {
         padding: 0.5em 1em;
@@ -169,13 +180,17 @@
         border-bottom-width: 0px;
         background: rgb(200, 200, 200);
 
+        @media (max-width: 700px) {
+          display: inline-block;
+        }
+
         &.active {
           background: white;
-          border-bottom: $line-size solid white;
-          margin-bottom: -3px;
         }
 
         a {
+          display: block;
+
           color: black;
           text-decoration: none;
         }

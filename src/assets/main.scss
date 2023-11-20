@@ -16,25 +16,6 @@ input[type="text"], input[type="password"], input[type="number"], button, textar
   margin-bottom: 0.5em;
 }
 
-button, label.btn {
-  background: rgb(225, 225, 225);
-  margin-right: 0.5em;
-  padding-left: 0.5em !important;
-  padding-right: 0.5em !important;
-  font-weight: normal !important;
-
-  &:hover {
-    background: rgb(200, 200, 200);
-  }
-
-  &:active {
-    background: rgb(175, 175, 175);
-  }
-
-  &:disabled {
-    background: rgb(150, 150, 150);
-  }
-}
 
 textarea {
   height: 6em;
@@ -58,5 +39,37 @@ textarea {
 
   input {
     margin-bottom: 0.5em;
+  }
+
+  @media (max-width: 650px) {
+    display: block;
+
+    label, input, textarea {
+      width: 100%;
+      display: block;
+      text-align: left;
+    }
+  }
+}
+
+button, label.btn {
+  background: rgb(225, 225, 225);
+  margin-right: 0.5em;
+  padding-left: 0.5em !important;
+  padding-right: 0.5em !important;
+  font-weight: normal !important;
+  font-size: 1em;
+  line-height: 1.6;
+
+  &:hover {
+    background: rgb(200, 200, 200);
+  }
+
+  &:active {
+    background: rgb(175, 175, 175);
+  }
+
+  &:disabled {
+    background: rgb(150, 150, 150);
   }
 }
