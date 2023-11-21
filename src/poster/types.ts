@@ -1,4 +1,4 @@
-import { ComAtprotoLabelDefs, AppBskyRichtextFacet } from '@atproto/api'
+import { ComAtprotoLabelDefs, AppBskyRichtextFacet, AppBskyFeedPost } from '@atproto/api'
 import { BlobRef } from '@atproto/lexicon'
 
 export type Dialect = "mastodon" | "bluesky"
@@ -12,15 +12,17 @@ export interface Credential {
 export interface Image {
   image: File
   description: string
+  blobUrl?: string
 }
 
 export type Sensitivity = "none" | "sexual" | "nudity" | "porn"
 
 export interface Post {
   text: string
-  images?: Image[]
+  images: Image[]
   sensitivity?: Sensitivity
   contentWarning?: string
+  _replyRef?: AppBskyFeedPost.ReplyRef
 }
 
 export type BskyPost = {
@@ -28,6 +30,7 @@ export type BskyPost = {
   embed?: BskyEmbed
   labels?: ComAtprotoLabelDefs.SelfLabels
   facets?: AppBskyRichtextFacet.Main[]
+  reply?: AppBskyFeedPost.ReplyRef
 }
 
 export type BskyEmbed = {

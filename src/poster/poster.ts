@@ -1,18 +1,27 @@
-import { BskyAgent, RichText } from '@atproto/api'
+import { BskyAgent, RichText, AtUri } from '@atproto/api'
 import { createRestAPIClient as createMastoClient } from 'masto'
 
 import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
 
 export const MaxImageSize = 1000000;
 
+export interface PostResponse {
+  url: string
+  uid?: string
+  cid?: string
+  bskyUri?: string
+}
+
 export class Poster {
   creds: Credential
+  _bskyAgent?: BskyAgent
+
 
   constructor(creds: Credential) {
     this.creds = creds
   }
 
-  async post(post: Post): Promise<string> {
+  async post(post: Post): Promise<PostResponse> {
     switch(this.creds.protocol) {
       case "bluesky":
         return this._bluesky(post)
@@ -25,13 +34,36 @@ export class Poster {
     }
   }
 
-  async _bluesky(post: Post): Promise<string> {
-    const agent = new BskyAgent({service: this.creds.server})
+  async postMany(posts: Post[]): Promise<PostResponse> {
+    switch(this.creds.protocol) {
+      case "bluesky":
+        return this._blueskyMany(structuredClone(posts))
 
-    await agent.login({
+      // case "mastodon":
+      //   return this._mastodonMany(structuredClone(posts))
+
+      default:
+        throw new Error(`${this.creds.protocol} not implemented`)
+    }
+  }
+
+  async _bskyLogin(): Promise<BskyAgent> {
+    if (this._bskyAgent !== undefined) {
+      return this._bskyAgent
+    }
+
+    this._bskyAgent = new BskyAgent({service: this.creds.server})
+    await this._bskyAgent.login({
       identifier: this.creds.username,
       password: this.creds.secretKey,
     })
+
+    return this._bskyAgent
+  }
+
+  async _bluesky(post: Post): Promise<PostResponse> {
+    const agent = await this._bskyLogin()
+
 
     const text = new RichText({text: post.text})
     await text.detectFacets(agent)
@@ -39,6 +71,10 @@ export class Poster {
     const bskyPost: BskyPost = {
       text: text.text,
       facets: text.facets,
+    }
+
+    if (post._replyRef !== undefined) {
+      bskyPost.reply = post._replyRef
     }
 
     if (post.images?.length) {
@@ -77,10 +113,53 @@ export class Poster {
 
     const uriPath = response.uri.split("/").pop()
     const postUrl = `https://bsky.app/profile/${this.creds.username}/post/${uriPath}`
-    return postUrl
+
+    return {
+      url: postUrl,
+      cid: response.cid,
+      bskyUri: response.uri,
+    }
   }
 
-  async _mastodon(post: Post): Promise<string> {
+  async _blueskyMany(posts: Post[]): Promise<PostResponse> {
+    const responses: PostResponse[] = []
+
+    try {
+      for (const post of posts) {
+        if (responses.length > 0) {
+          const root = responses[0]
+          const parent = responses[responses.length - 1]
+
+          post._replyRef = {
+            root: {
+              uri: root.bskyUri as string,
+              cid: root.cid as string,
+            },
+            parent: {
+              uri: parent.bskyUri as string,
+              cid: parent.cid as string,
+            },
+          }
+        }
+
+        const resp = await this._bluesky(post)
+        responses.push(resp)
+      }
+    } catch (err) {
+      responses.reverse()
+
+      const agent = await this._bskyLogin()
+      for (const resp of responses) {
+        await agent.deletePost(resp.bskyUri as string)
+      }
+
+      throw err
+    }
+
+    return responses[0]
+  }
+
+  async _mastodon(post: Post): Promise<PostResponse> {
     const client = createMastoClient({
       url: this.creds.server,
       accessToken: this.creds.secretKey,
@@ -123,7 +202,7 @@ export class Poster {
       throw new Error(`no url on status -- uri: ${status.uri}`)
     }
 
-    return status.url
+    return {url: status.url}
   }
 }
 

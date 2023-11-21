@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed, watch } from 'vue'
+  import { ref, computed, watch, toRaw } from 'vue'
   import type { Ref } from 'vue'
   import Compressor from 'compressorjs'
   import { useCredentialsStore } from '@/stores/credentials'
@@ -20,23 +20,22 @@
     blobUrl: string
   }
 
+  const emptyPost: Post = {
+    text: "",
+    contentWarning: "",
+    sensitivity: "none",
+    images: [],
+  }
+
+  const posts: Ref<Post[]> = ref([structuredClone(emptyPost)])
+
   const toasts: Ref<toast[]> = ref([])
-
   const creds = useCredentialsStore()
-
-  const contentWarning: Ref<string> = ref("")
-  const text: Ref<string> = ref("")
-  const images: Ref<Image[]> = ref([])
-  const sensitivity: Ref<Sensitivity> = ref("none")
-
-  const postSize = computed(() => {
-    return `${300 - text.value.length}`
-  })
 
   window.onload = () => {
     const queryParams = new URLSearchParams(window.location.search)
     if (queryParams.has("text")) {
-      text.value = queryParams.get("text") as string
+      posts.value[0].text = queryParams.get("text") as string
     }
   }
 
@@ -45,49 +44,40 @@
   const enqueued: Ref<number> = ref(0)
   watch(enqueued, (value, lastValue) => {
     if (value == 0 && lastValue != 0) {
-      contentWarning.value = ""
-      text.value = ""
-      images.value = []
-      sensitivity.value = "none"
+      posts.value = [{...emptyPost}]
     }
   })
 
   function post() {
     toasts.value = []
 
-    if (text.value.length + images.value.length == 0) {
-      toasts.value.push({
-        type: "error",
-        error: "Can't send an empty post",
-      })
-      return
-    }
+    for (const post of posts.value) {
+      if (post.text.length + post.images?.length == 0) {
+        toasts.value.push({
+          type: "error",
+          error: "Can't send an empty post",
+        })
+        return
+      }
 
-    if (text.value.length > 300) {
-      const over = text.value.length - 300
-      alert(`your post text is too long, it is currently ${over} characters too long`)
-      return
+      if (post.text.length > 300) {
+        toasts.value.push({
+          type: "error",
+          error: "One of your posts is too long",
+        })
+        return
+      }
     }
 
     enqueued.value += creds.credentials.length
 
-    let post: Post = {
-      text: text.value,
-      sensitivity: sensitivity.value,
-      contentWarning: contentWarning.value,
-    }
-
-    if (images.value.length) {
-      post.images = images.value
-    }
-
     for (let cred of creds.credentials) {
       const poster = new Poster(cred)
-      poster.post(post).then((url) => {
-        console.log("success", url)
+      poster.postMany(toRaw(posts.value)).then((resp) => {
+        console.log("success", resp)
         toasts.value.push({
           type: "posted",
-          link: url,
+          link: resp.url,
           shortname: `${cred.server} : ${cred.username}`,
         })
       }).catch((e) => {
@@ -104,21 +94,27 @@
   }
 
   function imageChange(event: Event) {
-    if (images.value.length >= 4) {
+    const input = event.target as HTMLInputElement
+    const index = parseInt(input.getAttribute("data-index") as string)
+
+    const post = posts.value[index]
+    console.log(post)
+    console.log("if")
+
+    if (post.images.length >= 4) {
       const deleteEm = confirm("You have already uploaded four images. Clear them all and start over?")
       if (!deleteEm) {
         return
       }
 
-      images.value = []
+      post.images = []
     }
 
-    const input = event.target as HTMLInputElement
     if (input.files) {
       const file = input.files[0]
 
       compressImage(file, MaxImageSize).then((file) => {
-        images.value.push({
+        post.images.push({
           image: file as File,
           description: "",
           blobUrl: URL.createObjectURL(file),
@@ -170,6 +166,10 @@
       post()
     }
   }
+
+  function addReply() {
+    posts.value.push(structuredClone(emptyPost))
+  }
 </script>
 
 <template>
@@ -190,48 +190,51 @@
   <h2>Create post</h2>
 
   <form @submit.prevent="post">
-    <div class="input-grid">
-      <label for="cw">Content warning</label>
-      <input type="text" name="cw" v-model="contentWarning">
+    <div class="post" v-for="(post, index) in posts">
+      <div class="input-grid">
+        <label for="cw">Content warning</label>
+        <input type="text" name="cw" v-model="post.contentWarning">
 
-      <label for="text">Post text</label>
-      <div id="postText">
-        <textarea name="text" v-model="text" @keydown="checkIfFastPost" :data-curr-size="postSize"></textarea>
-        <div id="postLength">{{postSize}}</div>
-      </div>
+        <label for="text">Post text</label>
+        <div id="postText">
+          <textarea name="text" v-model="post.text" @keydown="checkIfFastPost"></textarea>
+          <div id="postLength">{{300 - post.text.length}}</div>
+        </div>
 
-      <label id="imglabel" for="image">Image</label>
-      <div class="fakie">
-        <label class="btn">
-          Upload Image
-          <input type="file" accept="image/*" @change="imageChange" :disabled="disableUpload" style="display: none;">
-        </label>
-      </div>
-    </div>
-
-    <div v-show="images.length != 0">
-      <div class="image-grid">
-        <div v-for="image in images" class="image-container">
-          <img :src="image.blobUrl" />
-          <label :for="image.blobUrl">Alt Text</label>
-          <textarea :id="image.blobUrl" v-model="image.description"></textarea>
+        <label id="imglabel" for="image">Image</label>
+        <div class="fakie">
+          <label class="btn">
+            Upload Image
+            <input type="file" accept="image/*" @change="imageChange" :data-index="index" :disabled="disableUpload" style="display: none;">
+          </label>
         </div>
       </div>
 
-      <div id="sensitivity-picker">
-        <strong>Sensitivity</strong><br />
-        <input type="radio" id="none" value="none" v-model="sensitivity">&nbsp;
-        <label for="none">None</label>&nbsp;
-        <input type="radio" id="sexual" value="sexual" v-model="sensitivity">&nbsp;
-        <label for="sexual">Suggestive</label>&nbsp;
-        <input type="radio" id="nudity" value="nudity" v-model="sensitivity">&nbsp;
-        <label for="nudity">Nudity</label>&nbsp;
-        <input type="radio" id="porn" value="porn" v-model="sensitivity">&nbsp;
-        <label for="porn">Porn</label>&nbsp;
+      <div v-show="post.images.length != 0">
+        <div class="image-grid">
+          <div v-for="image in post.images" class="image-container">
+            <img :src="image.blobUrl" />
+            <label :for="image.blobUrl">Alt Text</label>
+            <textarea :id="image.blobUrl" v-model="image.description"></textarea>
+          </div>
+        </div>
+
+        <div id="sensitivity-picker">
+          <strong>Sensitivity</strong><br />
+          <input type="radio" id="none" value="none" v-model="post.sensitivity">&nbsp;
+          <label for="none">None</label>&nbsp;
+          <input type="radio" id="sexual" value="sexual" v-model="post.sensitivity">&nbsp;
+          <label for="sexual">Suggestive</label>&nbsp;
+          <input type="radio" id="nudity" value="nudity" v-model="post.sensitivity">&nbsp;
+          <label for="nudity">Nudity</label>&nbsp;
+          <input type="radio" id="porn" value="porn" v-model="post.sensitivity">&nbsp;
+          <label for="porn">Porn</label>&nbsp;
+        </div>
       </div>
     </div>
 
     <button id="postit" :disabled="enqueued != 0">Post</button>
+    <button id="addreply" :disabled="enqueued != 0" @click.prevent="addReply">Add to thread</button>
   </form>
 </template>
 
@@ -296,6 +299,11 @@
       padding-right: 1em;
       font-family: monospace;
       font-weight: bold;
+      color: rgb(175, 175, 175);
     }
+  }
+
+  .post {
+    margin-bottom: 2em;
   }
 </style>
