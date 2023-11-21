@@ -18,7 +18,7 @@ input[type="text"], input[type="password"], input[type="number"], button, textar
 
 
 textarea {
-  height: 6em;
+  min-height: 6em;
 }
 
 .input-grid {

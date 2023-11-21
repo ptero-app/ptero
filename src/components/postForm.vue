@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
+  import { ref, computed, watch } from 'vue'
   import type { Ref } from 'vue'
   import Compressor from 'compressorjs'
   import { useCredentialsStore } from '@/stores/credentials'
@@ -28,6 +28,14 @@
   const text: Ref<string> = ref("")
   const images: Ref<Image[]> = ref([])
   const sensitivity: Ref<Sensitivity> = ref("none")
+
+  const postSize = computed(() => {
+    if (text.value.length < 300) {
+      return `${text.value.length}`
+    }
+
+    return `${300 - text.value.length}`
+  })
 
   window.onload = () => {
     const queryParams = new URLSearchParams(window.location.search)
@@ -191,7 +199,10 @@
       <input type="text" name="cw" v-model="contentWarning">
 
       <label for="text">Post text</label>
-      <textarea name="text" v-model="text" @keydown="checkIfFastPost"></textarea>
+      <div id="postText">
+        <textarea name="text" v-model="text" @keydown="checkIfFastPost" :data-curr-size="postSize"></textarea>
+        <div id="postLength">{{postSize}}</div>
+      </div>
 
       <label id="imglabel" for="image">Image</label>
       <div class="fakie">
@@ -268,6 +279,27 @@
   @media (max-width: 650px) {
     #imglabel {
       display: none;
+    }
+  }
+
+  #postText {
+    textarea {
+      width: 100%;
+      padding-bottom: 2em;
+
+      @media (max-width: 650px) {
+        min-height: 8em;
+      }
+    }
+
+    #postLength {
+      position: relative;
+      float: right;
+      bottom: 3em;
+      text-align: right;
+      padding-right: 1em;
+      font-family: monospace;
+      font-weight: bold;
     }
   }
 </style>
