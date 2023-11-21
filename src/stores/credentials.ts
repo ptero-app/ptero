@@ -24,26 +24,28 @@ export const useCredentialsStore = defineStore('credentials', () => {
   })
 
   const blueskyCredentials = computed(() => {
-    return credentials.value.filter((cred) => cred.protocol == "bluesky")
+    return credentials.value.filter((cred) => cred.protocol == 'bluesky')
   })
 
   function clear() {
     credentials.value = []
   }
 
-  const lf = localforage.createInstance({name: "credentials"})
+  const lf = localforage.createInstance({ name: 'credentials' })
 
-  lf.getItem("credentials").then((value) => {
-    if (value !== null) {
-      credentials.value = JSON.parse(value as string)
-    }
-  }).catch((err) => {
-    console.log(err)
-    throw err
-  })
+  lf.getItem('credentials')
+    .then((value) => {
+      if (value !== null) {
+        credentials.value = JSON.parse(value as string)
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      throw err
+    })
 
   function save() {
-    lf.setItem("credentials", JSON.stringify(credentials.value)).catch((err) => {
+    lf.setItem('credentials', JSON.stringify(credentials.value)).catch((err) => {
       console.log(err)
       throw err
     })

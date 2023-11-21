@@ -1,7 +1,7 @@
 import { ComAtprotoLabelDefs, AppBskyRichtextFacet, AppBskyFeedPost } from '@atproto/api'
 import { BlobRef } from '@atproto/lexicon'
 
-export type Dialect = "mastodon" | "bluesky"
+export type Dialect = 'mastodon' | 'bluesky'
 export interface Credential {
   protocol: Dialect
   server: string
@@ -15,7 +15,7 @@ export interface Image {
   blobUrl?: string
 }
 
-export type Sensitivity = "none" | "sexual" | "nudity" | "porn"
+export type Sensitivity = 'none' | 'sexual' | 'nudity' | 'porn'
 
 export interface Post {
   text: string

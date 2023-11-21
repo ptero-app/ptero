@@ -8,14 +8,18 @@
   font-weight: normal;
 }
 
-input[type="text"], input[type="password"], input[type="number"], button, textarea, label.btn {
+input[type='text'],
+input[type='password'],
+input[type='number'],
+button,
+textarea,
+label.btn {
   font-size: 1em;
   padding: 0.25em;
   border: 3px solid black;
 
   margin-bottom: 0.5em;
 }
-
 
 textarea {
   min-height: 6em;
@@ -44,7 +48,9 @@ textarea {
   @media (max-width: 650px) {
     display: block;
 
-    label, input, textarea {
+    label,
+    input,
+    textarea {
       width: 100%;
       display: block;
       text-align: left;
@@ -52,7 +58,8 @@ textarea {
   }
 }
 
-button, label.btn {
+button,
+label.btn {
   background: rgb(225, 225, 225);
   margin-right: 0.5em;
   padding-left: 0.5em !important;

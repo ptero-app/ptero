@@ -3,7 +3,7 @@ import { createRestAPIClient as createMastoClient } from 'masto'
 
 import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
 
-export const MaxImageSize = 1000000;
+export const MaxImageSize = 1000000
 
 export interface PostResponse {
   url: string
@@ -16,17 +16,16 @@ export class Poster {
   creds: Credential
   _bskyAgent?: BskyAgent
 
-
   constructor(creds: Credential) {
     this.creds = creds
   }
 
   async post(post: Post): Promise<PostResponse> {
-    switch(this.creds.protocol) {
-      case "bluesky":
+    switch (this.creds.protocol) {
+      case 'bluesky':
         return this._bluesky(post)
 
-      case "mastodon":
+      case 'mastodon':
         return this._mastodon(post)
 
       default:
@@ -35,8 +34,8 @@ export class Poster {
   }
 
   async postMany(posts: Post[]): Promise<PostResponse> {
-    switch(this.creds.protocol) {
-      case "bluesky":
+    switch (this.creds.protocol) {
+      case 'bluesky':
         return this._blueskyMany(structuredClone(posts))
 
       // case "mastodon":
@@ -52,10 +51,10 @@ export class Poster {
       return this._bskyAgent
     }
 
-    this._bskyAgent = new BskyAgent({service: this.creds.server})
+    this._bskyAgent = new BskyAgent({ service: this.creds.server })
     await this._bskyAgent.login({
       identifier: this.creds.username,
-      password: this.creds.secretKey,
+      password: this.creds.secretKey
     })
 
     return this._bskyAgent
@@ -64,13 +63,12 @@ export class Poster {
   async _bluesky(post: Post): Promise<PostResponse> {
     const agent = await this._bskyLogin()
 
-
-    const text = new RichText({text: post.text})
+    const text = new RichText({ text: post.text })
     await text.detectFacets(agent)
 
     const bskyPost: BskyPost = {
       text: text.text,
-      facets: text.facets,
+      facets: text.facets
     }
 
     if (post._replyRef !== undefined) {
@@ -79,45 +77,45 @@ export class Poster {
 
     if (post.images?.length) {
       const embed: BskyEmbed = {
-        $type: "app.bsky.embed.images",
-        images: [],
+        $type: 'app.bsky.embed.images',
+        images: []
       }
 
       for (let idx = 0; idx < post.images.length; idx++) {
         const image = post.images[idx]
 
         if (image.image.size > MaxImageSize) {
-          throw new Error("Image too large")
+          throw new Error('Image too large')
         }
 
         const binaryRep = await syncReader(image.image)
-        const blob = await agent.uploadBlob(binaryRep, {encoding: image.image.type})
+        const blob = await agent.uploadBlob(binaryRep, { encoding: image.image.type })
 
         embed.images?.push({
           image: blob.data.blob,
-          alt: image.description,
+          alt: image.description
         })
       }
 
       bskyPost.embed = embed
 
-      if (post.sensitivity && post.sensitivity != "none") {
+      if (post.sensitivity && post.sensitivity != 'none') {
         bskyPost.labels = {
-          $type: "com.atproto.label.defs#selfLabels",
-          values: [{val: post.sensitivity}],
+          $type: 'com.atproto.label.defs#selfLabels',
+          values: [{ val: post.sensitivity }]
         }
       }
     }
 
     const response = await agent.post(bskyPost)
 
-    const uriPath = response.uri.split("/").pop()
+    const uriPath = response.uri.split('/').pop()
     const postUrl = `https://bsky.app/profile/${this.creds.username}/post/${uriPath}`
 
     return {
       url: postUrl,
       cid: response.cid,
-      bskyUri: response.uri,
+      bskyUri: response.uri
     }
   }
 
@@ -133,12 +131,12 @@ export class Poster {
           post._replyRef = {
             root: {
               uri: root.bskyUri as string,
-              cid: root.cid as string,
+              cid: root.cid as string
             },
             parent: {
               uri: parent.bskyUri as string,
-              cid: parent.cid as string,
-            },
+              cid: parent.cid as string
+            }
           }
         }
 
@@ -162,11 +160,11 @@ export class Poster {
   async _mastodon(post: Post): Promise<PostResponse> {
     const client = createMastoClient({
       url: this.creds.server,
-      accessToken: this.creds.secretKey,
+      accessToken: this.creds.secretKey
     })
 
     const mastoPost: MastoPost = {
-      status: post.text,
+      status: post.text
     }
 
     if (post.images?.length) {
@@ -174,7 +172,7 @@ export class Poster {
 
       for (const image of post.images) {
         const input: MastoMedia = {
-          file: image.image,
+          file: image.image
         }
 
         if (image.description?.length) {
@@ -188,7 +186,7 @@ export class Poster {
       mastoPost.mediaIds = mediaIds
     }
 
-    if (post.sensitivity && post.sensitivity != "none") {
+    if (post.sensitivity && post.sensitivity != 'none') {
       mastoPost.sensitive = true
     }
 
@@ -202,7 +200,7 @@ export class Poster {
       throw new Error(`no url on status -- uri: ${status.uri}`)
     }
 
-    return {url: status.url}
+    return { url: status.url }
   }
 }
 
