@@ -1,4 +1,4 @@
-import { BskyAgent, RichText, AtUri } from '@atproto/api'
+import { BskyAgent, RichText } from '@atproto/api'
 import { createRestAPIClient as createMastoClient } from 'masto'
 
 import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'

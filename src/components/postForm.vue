@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, watch, toRaw } from 'vue'
+import { ref, watch, toRaw } from 'vue'
 import type { Ref } from 'vue'
 import Compressor from 'compressorjs'
 import { useCredentialsStore } from '@/stores/credentials'
 import { Poster, MaxImageSize } from '@/poster'
-import type { Post, Sensitivity } from '@/poster'
+import type { Post } from '@/poster'
 
 type toastType = 'posted' | 'error'
 type toast = {
@@ -12,12 +12,6 @@ type toast = {
   link?: string
   shortname?: string
   error?: string
-}
-
-type Image = {
-  image: File
-  description: string
-  blobUrl: string
 }
 
 const emptyPost: Post = {
