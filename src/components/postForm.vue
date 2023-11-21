@@ -30,10 +30,6 @@
   const sensitivity: Ref<Sensitivity> = ref("none")
 
   const postSize = computed(() => {
-    if (text.value.length < 300) {
-      return `${text.value.length}`
-    }
-
     return `${300 - text.value.length}`
   })
 
