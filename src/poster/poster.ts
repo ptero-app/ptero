@@ -38,7 +38,7 @@ export class Poster {
       case 'bluesky':
         return this._blueskyMany(structuredClone(posts))
 
-      case "mastodon":
+      case 'mastodon':
         return this._mastodonMany(structuredClone(posts))
 
       default:
@@ -206,7 +206,7 @@ export class Poster {
 
     return {
       url: status.url,
-      mastoId: status.id,
+      mastoId: status.id
     }
   }
 

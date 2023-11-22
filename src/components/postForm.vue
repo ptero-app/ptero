@@ -170,7 +170,10 @@ function checkIfFastPost(event: KeyboardEvent) {
 }
 
 function addReply() {
-  posts.value.push(structuredClone(emptyPost))
+  const newPost = structuredClone(emptyPost)
+  newPost.contentWarning = posts.value[posts.value.length - 1].contentWarning
+
+  posts.value.push(newPost)
 }
 </script>
 
