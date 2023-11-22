@@ -323,4 +323,8 @@ function addReply() {
 .post {
   margin-bottom: 2em;
 }
+
+#addreply {
+  float: right;
+}
 </style>
