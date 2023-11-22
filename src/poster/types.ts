@@ -23,6 +23,7 @@ export interface Post {
   sensitivity?: Sensitivity
   contentWarning?: string
   _replyRef?: AppBskyFeedPost.ReplyRef
+  _reply?: AppBskyFeedPost.ReplyRef | string
 }
 
 export type BskyPost = {
@@ -48,6 +49,7 @@ export type MastoPost = {
   sensitive?: boolean
   spoilerText?: string
   mediaIds?: string[]
+  inReplyToId?: string
 }
 
 export type MastoMedia = {

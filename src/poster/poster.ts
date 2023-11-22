@@ -1,4 +1,4 @@
-import { BskyAgent, RichText } from '@atproto/api'
+import { BskyAgent, RichText, AppBskyFeedPost } from '@atproto/api'
 import { createRestAPIClient as createMastoClient } from 'masto'
 
 import type { Credential, Post, BskyPost, BskyEmbed, MastoPost, MastoMedia } from './types'
@@ -7,9 +7,9 @@ export const MaxImageSize = 1000000
 
 export interface PostResponse {
   url: string
-  uid?: string
   cid?: string
   bskyUri?: string
+  mastoId?: string
 }
 
 export class Poster {
@@ -38,8 +38,8 @@ export class Poster {
       case 'bluesky':
         return this._blueskyMany(structuredClone(posts))
 
-      // case "mastodon":
-      //   return this._mastodonMany(structuredClone(posts))
+      case "mastodon":
+        return this._mastodonMany(structuredClone(posts))
 
       default:
         throw new Error(`${this.creds.protocol} not implemented`)
@@ -71,8 +71,8 @@ export class Poster {
       facets: text.facets
     }
 
-    if (post._replyRef !== undefined) {
-      bskyPost.reply = post._replyRef
+    if (post._reply !== undefined) {
+      bskyPost.reply = post._reply as AppBskyFeedPost.ReplyRef
     }
 
     if (post.images?.length) {
@@ -128,7 +128,7 @@ export class Poster {
           const root = responses[0]
           const parent = responses[responses.length - 1]
 
-          post._replyRef = {
+          post._reply = {
             root: {
               uri: root.bskyUri as string,
               cid: root.cid as string
@@ -167,6 +167,10 @@ export class Poster {
       status: post.text
     }
 
+    if (post._reply !== undefined) {
+      mastoPost.inReplyToId = post._reply as string
+    }
+
     if (post.images?.length) {
       const mediaIds: string[] = []
 
@@ -200,7 +204,40 @@ export class Poster {
       throw new Error(`no url on status -- uri: ${status.uri}`)
     }
 
-    return { url: status.url }
+    return {
+      url: status.url,
+      mastoId: status.id,
+    }
+  }
+
+  async _mastodonMany(posts: Post[]): Promise<PostResponse> {
+    const responses: PostResponse[] = []
+
+    try {
+      for (const post of posts) {
+        if (responses.length > 0) {
+          post._reply = responses[responses.length - 1].mastoId
+        }
+
+        const resp = await this._mastodon(post)
+        responses.push(resp)
+      }
+    } catch (err) {
+      responses.reverse()
+
+      const client = createMastoClient({
+        url: this.creds.server,
+        accessToken: this.creds.secretKey
+      })
+
+      for (const resp of responses) {
+        await client.v1.statuses.$select(resp.mastoId as string).remove()
+      }
+
+      throw err
+    }
+
+    return responses[0]
   }
 }
 
