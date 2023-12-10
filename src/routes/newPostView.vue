@@ -296,6 +296,8 @@ function addReply() {
 
 #postit {
   @media (max-width: 650px) {
+    max-width: 100%;
+    min-width: 100%;
     width: 100%;
     text-align: left;
   }
