@@ -296,8 +296,6 @@ function addReply() {
 
 #postit {
   @media (max-width: 650px) {
-    max-width: 100%;
-    min-width: 100%;
     width: 100%;
     text-align: left;
   }
@@ -312,6 +310,8 @@ function addReply() {
 .postText {
   textarea {
     width: 100%;
+    max-width: 100%;
+    min-width: 100%;
     padding-bottom: 2em;
 
     @media (max-width: 650px) {
