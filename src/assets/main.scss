@@ -19,6 +19,11 @@ body {
 .container {
   max-width: 750px;
   margin: 0 auto;
+  padding: 0 2em;
+
+  @media (max-width: 650px) {
+    padding: 0 1em;
+  }
 }
 
 header {
@@ -66,9 +71,9 @@ header {
 
     width: 100%;
     margin-bottom: 2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    margin-left: -2rem;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-left: -1em;
 
     overflow-x: scroll;
     overflow-y: visible;
