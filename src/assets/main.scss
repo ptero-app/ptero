@@ -1,11 +1,111 @@
-@import './base.css';
+@use 'sass:color';
+
+@import url(https://fonts.bunny.net/css?family=inter:400,700,900);
+
+$color-sand: #d6a887;
+$color-bone: #f8f0e5;
+$color-twilight: #404ea6;
+$color-midnight: #2e3d66;
+$line-size: 3px;
+
+body {
+  background: $color-bone;
+  font-family: 'inter', sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+header {
+  .container {
+    display: grid;
+    grid-template-columns: 10em auto;
+    grid-column-gap: 1em;
+    align-items: center;
+  }
+
+  background: $color-twilight;
+  color: $color-bone;
+  padding: 2rem;
+  padding-bottom: 5em;
+
+  #logo {
+    width: 10em;
+  }
+
+  h1 {
+    font-weight: 900;
+    padding: 0;
+    margin: 0;
+    font-size: 3em;
+  }
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+}
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
   font-weight: normal;
+}
+
+#tabs {
+  #tab-select {
+    margin-top: -3em;
+
+    white-space: nowrap;
+    display: flex;
+
+    list-style: none;
+
+    width: 100%;
+    margin-bottom: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    margin-left: -2rem;
+
+    overflow-x: scroll;
+    overflow-y: visible;
+
+    li {
+      height: 3em;
+      display: flex;
+      align-items: center;
+
+      padding: 0 1em;
+      margin-right: 1em;
+      background: $color-sand;
+
+      a {
+        display: block;
+
+        color: rgb(50, 50, 75);
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      &.active {
+        background: $color-bone;
+        a {
+          color: $color-midnight;
+        }
+      }
+    }
+  }
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+.tab ul {
+  margin-bottom: 1em;
 }
 
 input[type='text'],
@@ -15,14 +115,29 @@ button,
 textarea,
 label.btn {
   font-size: 1em;
-  padding: 0.25em;
-  border: 3px solid black;
+  line-height: 1.5em;
+  padding: 0.5em;
+  border-width: 0;
+  box-sizing: border-box;
 
   margin-bottom: 0.5em;
+  font-family: 'inter', sans-serif;
 }
 
 textarea {
   min-height: 6em;
+}
+
+textarea:focus,
+input:focus,
+button:focus {
+  outline: solid $color-sand;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-style: italic;
+  color: color.scale($color-sand, $lightness: -40%);
 }
 
 .input-grid {
@@ -34,6 +149,10 @@ textarea {
     padding-top: 0.25em;
     text-align: right;
     font-weight: bold;
+  }
+
+  .full {
+    grid-column: 1 / span 2;
   }
 
   .spacer {

@@ -8,29 +8,6 @@ import type { Credential } from '@/poster'
 export const useCredentialsStore = defineStore('credentials', () => {
   const credentials: Ref<Credential[]> = ref([])
 
-  const displaySafeCreds = computed(() => {
-    const out: Credential[] = []
-
-    for (const cred of credentials.value) {
-      out.push({
-        protocol: cred.protocol,
-        server: cred.server,
-        username: cred.username,
-        secretKey: "<that's a secret>"
-      })
-    }
-
-    return out
-  })
-
-  const blueskyCredentials = computed(() => {
-    return credentials.value.filter((cred) => cred.protocol == 'bluesky')
-  })
-
-  function clear() {
-    credentials.value = []
-  }
-
   const lf = localforage.createInstance({ name: 'credentials' })
 
   lf.getItem('credentials')
@@ -44,12 +21,81 @@ export const useCredentialsStore = defineStore('credentials', () => {
       throw err
     })
 
-  function save() {
+  async function load() {
+    if (credentials.value.length === 0) {
+      const rawCredentials = await lf.getItem('credentials')
+      if (rawCredentials !== null) {
+        credentials.value = JSON.parse(rawCredentials as string)
+      }
+    }
+
+    return credentials
+  }
+
+  const blueskyCredentials = computed(() => {
+    return credentials.value.filter((cred) => cred.protocol == 'bluesky')
+  })
+
+  function clear(): void {
+    credentials.value = []
+  }
+
+  function save(): void {
     lf.setItem('credentials', JSON.stringify(credentials.value)).catch((err) => {
       console.log(err)
       throw err
     })
   }
 
-  return { credentials, displaySafeCreds, clear, save, blueskyCredentials }
+  async function register(credential: Credential): Promise<undefined> {
+    if (!credential.server.startsWith('http')) {
+      credential.server = `https://${credential.server}`
+    }
+
+    if (!URL.canParse(credential.server)) {
+      throw new Error(`${credential.server} is not a valid url (did you include the "https://" ?)`)
+    } else {
+      const parsedUrl = new URL(credential.server)
+      if (parsedUrl.protocol !== 'https:') {
+        throw new Error(`${credential.server} is not an https server`)
+      } else if (parsedUrl.hostname === '') {
+        throw new Error(`${credential.server} does not include a hostname`)
+      }
+    }
+
+    if (credential.username === '') {
+      throw new Error('username is blank')
+    }
+
+    if (credential.secretKey === '') {
+      throw new Error('password/secret key is blank')
+    }
+
+    if (
+      credentials.value.some(
+        (c) => c.server == credential.server && c.username == credential.username
+      )
+    ) {
+      throw new Error("You've already added this user/server combination")
+    }
+
+    credentials.value.push(credential)
+    save()
+
+    return undefined
+  }
+
+  function remove(server: string, user: string): void {
+    const updatedCreds = credentials.value.filter((cred) => {
+      if (cred.server == server && cred.username == user) {
+        return false
+      }
+      return true
+    })
+
+    credentials.value = updatedCreds
+    save()
+  }
+
+  return { credentials, load, clear, save, remove, register, blueskyCredentials }
 })

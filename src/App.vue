@@ -1,247 +1,55 @@
 <script setup lang="ts">
-import registerForm from './components/registerForm.vue'
-import postForm from './components/postForm.vue'
-import deleteForm from './components/deleteForm.vue'
+import { useCredentialsStore } from '@/stores/credentials'
+import { onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
-import { ref, computed } from 'vue'
-import type { Ref } from 'vue'
+const router = useRouter()
+const route = useRoute()
 
-const tab: Ref<string> = ref('post')
+onMounted(async () => {
+  console.log('mounted app')
+  const creds = useCredentialsStore()
+  await creds.load()
 
-const showPost = computed(() => {
-  return tab.value == 'post'
+  if (creds.credentials.length == 0) {
+    router.push({ path: '/credentials' })
+  } else {
+    router.push({ path: '/post' })
+  }
 })
-const showCredentials = computed(() => {
-  return tab.value == 'credentials'
-})
-const showAbout = computed(() => {
-  return tab.value == 'about'
-})
-const showDelete = computed(() => {
-  return tab.value == 'delete'
-})
-
-function openPost() {
-  tab.value = 'post'
-}
-
-function openCredentials() {
-  tab.value = 'credentials'
-}
-
-function openAbout() {
-  tab.value = 'about'
-}
-
-function openDelete() {
-  tab.value = 'delete'
-}
 </script>
 
 <template>
   <header>
-    <h1>Ptero</h1>
-
-    <p>
-      Ptero is a federated cross-poster, for creating the same post with multiple accounts on
-      services that speak the Mastodon and Bluesky protocols.
-    </p>
+    <div class="container">
+      <img src="/logo.svg" id="logo" alt="Ptero Logo" />
+      <div class="desc">
+        <h1>Ptero</h1>
+        <p>The federated cross-poster for Mastodon and Bluesky</p>
+      </div>
+    </div>
   </header>
 
   <div id="tabs">
-    <ul id="tab-select">
-      <li :class="{ active: showPost }"><a @click="openPost" href="#">Create Post</a></li>
-      <li :class="{ active: showCredentials }">
-        <a @click="openCredentials" href="#">Manage Credentials</a>
-      </li>
-      <li :class="{ active: showDelete }"><a @click="openDelete" href="#">Mass Delete Posts</a></li>
-      <li :class="{ active: showAbout }"><a @click="openAbout" href="#">About</a></li>
-    </ul>
+    <div class="container">
+      <ul id="tab-select">
+        <li :class="{ active: route.name == 'new-post' }">
+          <router-link to="/post">Create Post</router-link>
+        </li>
+        <li :class="{ active: route.name == 'credentials' }">
+          <router-link to="/credentials">Manage Credentials</router-link>
+        </li>
+        <li :class="{ active: route.name == 'bsky-delete' }">
+          <router-link to="/bsky-delete">Mass Delete Posts</router-link>
+        </li>
+        <li :class="{ active: route.name == 'about' }">
+          <router-link to="/">About</router-link>
+        </li>
+      </ul>
 
-    <div id="tab-zone">
-      <div class="tab" v-show="showCredentials">
-        <registerForm />
-      </div>
-      <div class="tab" v-show="showPost">
-        <postForm />
-      </div>
-      <div class="tab" v-show="showDelete">
-        <deleteForm />
-      </div>
-
-      <div class="tab" v-show="showAbout">
-        <h2>About Ptero</h2>
-
-        <p>
-          Ptero is an app for posting to both Mastodon and Bluesky at the same time (and supports
-          posting to multiple accounts for each service).
-        </p>
-
-        <p>
-          Ptero runs completely in your web browser, meaning your credentials stay completely on
-          your own device, and are never transmitted to a third party.
-        </p>
-
-        <p>
-          Ptero's source code is available at
-          <a href="https://github.com/ptero-app/ptero/">https://github.com/ptero-app/ptero/</a>, and
-          is open source under the Mozilla Public License. Feature planning is currently noted in
-          the <a href="https://github.com/ptero-app/ptero/blob/main/TODO">TODO</a> document in the
-          source code.
-        </p>
-
-        <h2>Using Ptero</h2>
-        <h3>Posting Limits</h3>
-        <p>
-          At present, Ptero only supports posts of up to 300 characters (the bluesky limit, because
-          the default mastodon limit is 500). Images are limited to 1MB in size (the bluesky limit
-          -- compressing them automatically is a nice to have feature for the future).
-        </p>
-
-        <h3>Adding Credentials</h3>
-        <p>
-          <strong>Note!</strong> At present, Ptero will post using all your configured credentials.
-          Selective posting is a future feature.
-        </p>
-
-        <p>
-          Under the "Manage Credentials" tab, you're given a form to add a new set of credentials
-          for multi-posting. You can also edit existing credentials and clear all your currently
-          saved credentials from this same screen. There is not currently a way to remove a single
-          credential.
-        </p>
-
-        <p>
-          <strong>To add a Bluesky account</strong>, it is <strong>strongly</strong> suggested that
-          you create an app password. You can do this in the bsky.app's settings page
-          <a href="https://bsky.app/settings/app-passwords">bsky.app/settings/app-passwords</a>.
-        </p>
-        <p>The recommended settings are:</p>
-        <ul>
-          <li>
-            <strong>Server:</strong> <code>https://bsky.social</code>. You can technically use
-            another server if it also speaks the atproto, but to use the main bluesky service, use
-            <code>https://bsky.social</code>. You <strong>must</strong> include the
-            <code>https</code>.
-          </li>
-          <li>
-            <strong>Username:</strong> either your handle on bluesky, minus the
-            <code>@</code> symbol (so if you're <code>@anexample.bsky.social</code>, you should use
-            <code>anexample.bsky.social</code>), or the email address you use to login. If you're
-            using the post delete function, you must use your handle.
-          </li>
-          <li>
-            <strong>API Key/App Password:</strong> this should be an app password you generated. You
-            can use your regular password, but I strongly recommend using an app password.
-          </li>
-        </ul>
-
-        <p>
-          <strong>To add a Mastodon account</strong>, you must create a new development app, and use
-          the access token generated for that app. To do this, open Preferences, and pick
-          Development from the sidebar (or navigate to
-          <code>yourmastodonserver.com/settings/applications</code>). Ptero requires the
-          <code>write:media</code> and <code>write:statuses</code> scopes.
-        </p>
-        <p>The recommended settings are:</p>
-        <ul>
-          <li>
-            <strong>Server:</strong> Your mastodon server's domain, for example
-            <code>https://mastodon.social</code>
-          </li>
-          <li>
-            <strong>Username:</strong> This is technically not required, you can add a name here for
-            personal reference
-          </li>
-          <li>
-            <strong>API Key/App Password:</strong> this is the access token for the development app
-            you generated.
-          </li>
-        </ul>
-
-        <h3>Mass Deleting Bluesky Posts</h3>
-        <p>
-          With Bluesky announcing that they're going to open up the main web app for public
-          consumption, people were looking for a way to easily delete old posts. That's what the
-          mass deleter is for.
-        </p>
-
-        <p>
-          If you've added at least one set of bluesky credentials, you can use the "Mass Delete
-          Posts" tab to delete all posts or reposts older than a certain age (to delete them all,
-          set the number of days to keep to <code>0</code>). Posts are reposts are a separate
-          button, because that's how bluesky organizes them internally, and my own preference is to
-          delete reposts sooner than posts.
-        </p>
-
-        <p>This feature only works with Bluesky, because mastodon has it built in.</p>
+      <div id="tab-zone">
+        <router-view></router-view>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped lang="scss">
-$line-size: 3px;
-
-header {
-  margin-bottom: 2em;
-
-  h1 {
-    text-align: center;
-  }
-}
-
-#tabs {
-  #tab-select {
-    white-space: nowrap;
-    display: flex;
-
-    list-style: none;
-    margin: 0;
-    margin-bottom: 2rem;
-    padding: 0;
-    padding-left: 1em;
-    padding-right: 1em;
-
-    border-bottom: $line-size solid black;
-
-    overflow-x: scroll;
-    overflow-y: visible;
-    width: calc(100% + 4rem);
-    margin-left: -2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-
-    li {
-      padding: 0.5em 1em;
-      margin-right: 1em;
-      border: $line-size solid black;
-      border-bottom-width: 0px;
-      background: rgb(200, 200, 200);
-
-      @media (max-width: 700px) {
-        display: inline-block;
-      }
-
-      &.active {
-        background: white;
-      }
-
-      a {
-        display: block;
-
-        color: black;
-        text-decoration: none;
-      }
-    }
-  }
-}
-
-p {
-  margin-bottom: 1em;
-}
-
-.tab ul {
-  margin-bottom: 1em;
-}
-</style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, toRaw } from 'vue'
+import { ref, watch, toRaw, onMounted } from 'vue'
 import type { Ref } from 'vue'
 import Compressor from 'compressorjs'
 import { useCredentialsStore } from '@/stores/credentials'
@@ -26,12 +26,12 @@ const posts: Ref<Post[]> = ref([structuredClone(emptyPost)])
 const toasts: Ref<toast[]> = ref([])
 const creds = useCredentialsStore()
 
-window.onload = () => {
+onMounted(() => {
   const queryParams = new URLSearchParams(window.location.search)
   if (queryParams.has('text')) {
     posts.value[0].text = queryParams.get('text') as string
   }
-}
+})
 
 const disableUpload: Ref<boolean> = ref(false)
 
@@ -191,34 +191,37 @@ function addReply() {
     </div>
   </div>
 
-  <h2>Create post</h2>
-
   <form @submit.prevent="post">
     <div class="post" v-for="(post, index) in posts">
-      <div class="input-grid">
-        <label for="cw">Content warning</label>
-        <input type="text" name="cw" v-model="post.contentWarning" />
+      <input
+        type="text"
+        name="cw"
+        placeholder="optional content warning"
+        v-model="post.contentWarning"
+      />
 
-        <label for="text">Post text</label>
-        <div id="postText">
-          <textarea name="text" v-model="post.text" @keydown="checkIfFastPost"></textarea>
-          <div id="postLength">{{ 300 - post.text.length }}</div>
-        </div>
+      <div class="postText">
+        <textarea
+          name="text"
+          placeholder="What's happening?"
+          v-model="post.text"
+          @keydown="checkIfFastPost"
+        ></textarea>
+        <div class="postLength">{{ post.text.length }} / 300</div>
+      </div>
 
-        <label id="imglabel" for="image">Image</label>
-        <div class="fakie">
-          <label class="btn">
-            Upload Image
-            <input
-              type="file"
-              accept="image/*"
-              @change="imageChange"
-              :data-index="index"
-              :disabled="disableUpload"
-              style="display: none"
-            />
-          </label>
-        </div>
+      <div class="fakie">
+        <label class="btn">
+          Upload Image
+          <input
+            type="file"
+            accept="image/*"
+            @change="imageChange"
+            :data-index="index"
+            :disabled="disableUpload"
+            style="display: none"
+          />
+        </label>
       </div>
 
       <div v-show="post.images.length != 0">
@@ -281,6 +284,12 @@ function addReply() {
   }
 }
 
+.post {
+  input[type='text'] {
+    width: 100%;
+  }
+}
+
 #sensitivity-picker {
   margin-bottom: 1em;
 }
@@ -298,7 +307,7 @@ function addReply() {
   }
 }
 
-#postText {
+.postText {
   textarea {
     width: 100%;
     padding-bottom: 2em;
@@ -308,12 +317,12 @@ function addReply() {
     }
   }
 
-  #postLength {
+  .postLength {
     position: relative;
     float: right;
-    bottom: 3em;
+    bottom: 2.5em;
     text-align: right;
-    padding-right: 1em;
+    padding-right: 0.5em;
     font-family: monospace;
     font-weight: bold;
     color: rgb(175, 175, 175);
@@ -324,7 +333,7 @@ function addReply() {
   margin-bottom: 2em;
 }
 
-#addreply {
+#addReply {
   float: right;
 }
 </style>
